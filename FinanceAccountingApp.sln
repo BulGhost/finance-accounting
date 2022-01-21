@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceAccounting.BusinessL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceAccounting.Security.IntegrationTests", "FinanceAccounting.Security.IntegrationTests\FinanceAccounting.Security.IntegrationTests.csproj", "{5D21F6EB-9FC5-4FE5-A646-01311F69C7F7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceAccounting.WebUI", "FinanceAccounting.WebUI\FinanceAccounting.WebUI.csproj", "{9C1CEF18-633C-437A-BE3D-1DC84917DA15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{5D21F6EB-9FC5-4FE5-A646-01311F69C7F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D21F6EB-9FC5-4FE5-A646-01311F69C7F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D21F6EB-9FC5-4FE5-A646-01311F69C7F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C1CEF18-633C-437A-BE3D-1DC84917DA15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C1CEF18-633C-437A-BE3D-1DC84917DA15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C1CEF18-633C-437A-BE3D-1DC84917DA15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C1CEF18-633C-437A-BE3D-1DC84917DA15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

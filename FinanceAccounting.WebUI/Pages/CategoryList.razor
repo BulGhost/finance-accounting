@@ -1,0 +1,37 @@
+﻿@page "/categories"
+@using FinanceAccounting.BusinessLogic.Common.DataTransferObjects.CategoryDto
+@inherits CategoryListBase
+
+<h3>Category List</h3>
+@if (Categories == null)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Category name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @code { private int _i = 0; }
+        @foreach (CategoryDto category in Categories)
+        {
+            <tr>
+                <th scope="row">@(++_i)</th>
+                <td>@category.CategoryName</td>
+                <td>@category.Type</td>
+                <td>
+                    <a href="#" class="btn btn-primary">Edit</a>
+                    <a href="#" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
