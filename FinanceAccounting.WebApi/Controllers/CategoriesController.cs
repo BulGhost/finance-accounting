@@ -28,7 +28,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     GET /api/categories/0
+        ///     GET /api/v1/categories/0
         /// </remarks>
         /// <param name="operationType">Type of category (0 - Income, 1 - Expense)</param>
         /// <param name="cancellationToken">Optional cancellation token</param>
@@ -53,7 +53,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     POST /api/categories
+        ///     POST /api/v1/categories
         ///     [
         ///         {
         ///             "type": 0,
@@ -88,7 +88,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     PUT /api/categories
+        ///     PUT /api/v1/categories
         ///     [
         ///         {
         ///             "id": 1,
@@ -123,7 +123,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     DELETE /api/categories
+        ///     DELETE /api/v1/categories
         ///     [
         ///         2, 4, 8
         ///     ]

@@ -84,7 +84,7 @@ using Microsoft.AspNetCore.Http;
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = result.StatusCode;
 
-            string response = JsonSerializer.Serialize(result);
+            string response = JsonSerializer.Serialize(result, new JsonSerializerOptions(JsonSerializerDefaults.Web));
 
             await context.Response.WriteAsync(response);
         }

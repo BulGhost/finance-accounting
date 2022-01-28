@@ -5,9 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinanceAccounting.BusinessLogic\FinanceAccounting.BusinessLogic.csproj" />
-    <ProjectReference Include="..\FinanceAccounting.DataAccess\FinanceAccounting.DataAccess.csproj" />
-    <ProjectReference Include="..\FinanceAccounting.Security\FinanceAccounting.Security.csproj" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
   </ItemGroup>
 
 </Project>

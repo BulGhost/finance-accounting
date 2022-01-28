@@ -32,25 +32,36 @@ namespace FinanceAccounting.WebApi
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDataAccess(connection);
             services.AddTransient<ExceptionHandlingMiddleware>();
-            services.AddCors();
+
+            services.AddCors(options =>
+                options.AddPolicy("CorsPolicy", builder => builder
+                    .WithOrigins("https://localhost:5001")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()));
+
             services.AddControllers().AddJsonOptions(opt =>
                 opt.JsonSerializerOptions.Converters.Add(new DateTimeConverter()));
             services.Configure<RouteOptions>(opt => opt.LowercaseUrls = true);
+
             services.AddVersionedApiExplorer(opt =>
             {
                 opt.GroupNameFormat = "'v'VVV";
                 opt.SubstituteApiVersionInUrl = true;
             });
+
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfigurator>();
             services.AddSwaggerGen();
             services.AddCustomIdentity();
             services.AddCustomAuthentication(Configuration);
+
             services.AddApiVersioning(opt =>
             {
                 opt.AssumeDefaultVersionWhenUnspecified = true;
                 opt.DefaultApiVersion = new ApiVersion(1, 0);
                 opt.ReportApiVersions = true;
             });
+
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
         }
@@ -74,7 +85,7 @@ namespace FinanceAccounting.WebApi
             app.UseCustomExceptionHandler();
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors();
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseApiVersioning();

@@ -33,7 +33,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     POST /api/register
+        ///     POST /api/v1/register
         ///     {
         ///         "userName": "UserName",
         ///         "email": "my.email@mail.com",
@@ -60,7 +60,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     POST /api/login
+        ///     POST /api/v1/login
         ///     {
         ///         "userName": "UserName",
         ///         "password": "Password123",
@@ -88,7 +88,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     POST /api/refresh-token
+        ///     POST /api/v1/refresh-token
         ///     {
         ///         "accessToken": "8lkyB6SJRJfE2Eo2Q6oR4Ugk5I1IZ47Z413Ygadq",
         ///         "refreshToken": "vkoJ8gWG2Z0BLAsmn8cX"
@@ -114,7 +114,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     DELETE /api/logout
+        ///     DELETE /api/v1/logout
         /// </remarks>
         /// <returns>No content</returns>
         /// <response code="204">Success</response>

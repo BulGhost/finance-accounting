@@ -9,6 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
+using FinanceAccounting.WebUI.AuthProvider;
+using FinanceAccounting.WebUI.Services;
+using FinanceAccounting.WebUI.Services.Interfaces;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FinanceAccounting.WebUI
 {
@@ -21,15 +26,17 @@ namespace FinanceAccounting.WebUI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazoredLocalStorage();
+            services.AddAuthenticationCore();
+            services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+            services.AddHttpClient<IAuthenticationClient, AuthenticationClient>();
+            services.AddHttpClient<ICategoriesClient, CategoriesClient>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -39,7 +46,6 @@ namespace FinanceAccounting.WebUI
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

@@ -1,9 +1,8 @@
-﻿@page "/categories"
-@using FinanceAccounting.BusinessLogic.Common.DataTransferObjects.CategoryDto
+﻿@page "/categories/{operationType}"
 @inherits CategoryListBase
 
 <h3>Category List</h3>
-@if (Categories == null)
+@*@if (Categories == null)
 {
     <div class="spinner"></div>
 }
@@ -34,4 +33,4 @@ else
         }
         </tbody>
     </table>
-}
+}*@

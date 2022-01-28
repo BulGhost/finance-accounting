@@ -31,7 +31,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     GET /api/operations/days-report?date=2022-01-10
+        ///     GET /api/v1/operations/days-report?date=2022-01-10
         /// </remarks>
         /// <param name="date">Date on which the report is to be generated</param>
         /// <param name="cancellationToken">Optional cancellation token</param>
@@ -57,7 +57,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     GET api/Operations/period-report?startDate=2020-10-10&amp;finalDate=2020-10-11
+        ///     GET api/v1/Operations/period-report?startDate=2020-10-10&amp;finalDate=2020-10-11
         /// </remarks>
         /// <param name="startDate">Start date on which the report is to be generated</param>
         /// <param name="finalDate">Final on which the report is to be generated</param>
@@ -84,7 +84,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     POST /api/operations
+        ///     POST /api/v1/operations
         ///     [
         ///         {
         ///             "date": "2022-01-10",
@@ -122,7 +122,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     PUT /api/operations
+        ///     PUT /api/v1/operations
         ///     [
         ///         {
         ///             "id": 42,
@@ -162,7 +162,7 @@ namespace FinanceAccounting.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        ///     DELETE /api/operations
+        ///     DELETE /api/v1/operations
         ///     [
         ///         64, 73, 89
         ///     ]
