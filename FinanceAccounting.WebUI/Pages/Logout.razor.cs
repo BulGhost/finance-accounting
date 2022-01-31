@@ -12,7 +12,7 @@ namespace FinanceAccounting.WebUI.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnInitializedAsync()
         {
             await AuthenticationClient.Logout();
             NavigationManager.NavigateTo("/");

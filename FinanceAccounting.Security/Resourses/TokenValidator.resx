@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccessTokenNotExpired" xml:space="preserve">
-    <value>Access token has not yet expired</value>
+  <data name="AccessTokenNotExpire" xml:space="preserve">
+    <value>The access token does not expire</value>
   </data>
   <data name="InvalidAccessToken" xml:space="preserve">
     <value>Invalid access token</value>

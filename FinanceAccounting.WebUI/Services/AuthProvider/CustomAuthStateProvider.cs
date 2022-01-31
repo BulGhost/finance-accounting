@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace FinanceAccounting.WebUI.AuthProvider
+namespace FinanceAccounting.WebUI.Services.AuthProvider
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
@@ -29,8 +29,9 @@ namespace FinanceAccounting.WebUI.AuthProvider
             }
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-            var userClaims = JwtParser.ParseClaimsFromJwt(token);
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(userClaims, "jwtAuthType")));
+            return JwtParser.TryParseClaimsFromJwt(token, out var userClaims)
+                ? new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(userClaims, "jwtAuthType")))
+                : _anonymous;
         }
 
         public void NotifyUserAuthentication(string username)

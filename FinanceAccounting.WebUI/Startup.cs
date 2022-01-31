@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
-using FinanceAccounting.WebUI.AuthProvider;
 using FinanceAccounting.WebUI.Services;
+using FinanceAccounting.WebUI.Services.AuthProvider;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
+using Polly;
 
 namespace FinanceAccounting.WebUI
 {
@@ -31,10 +32,20 @@ namespace FinanceAccounting.WebUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazoredLocalStorage();
-            services.AddAuthenticationCore();
+            services.AddAuthorizationCore();
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             services.AddHttpClient<IAuthenticationClient, AuthenticationClient>();
-            services.AddHttpClient<ICategoriesClient, CategoriesClient>();
+            services.AddTransient<TokenMessageHandler>();
+            services.AddHttpClient<ICategoriesClient, CategoriesClient>()
+                .AddHttpMessageHandler<TokenMessageHandler>()
+                .AddTransientHttpErrorPolicy(policy =>
+                    policy.WaitAndRetryAsync(new[]
+                    {
+                        TimeSpan.FromMilliseconds(500),
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromSeconds(3)
+                    }));
+            services.AddScoped<RefreshTokenService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,6 +64,8 @@ namespace FinanceAccounting.WebUI
             app.UseStaticFiles();
 
             app.UseRouting();
+            //app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

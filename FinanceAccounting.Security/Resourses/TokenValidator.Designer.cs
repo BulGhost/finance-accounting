@@ -19,7 +19,7 @@ namespace FinanceAccounting.Security.Resourses {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class TokenValidator {
@@ -61,11 +61,11 @@ namespace FinanceAccounting.Security.Resourses {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Access token has not yet expired.
+        ///   Looks up a localized string similar to The access token does not expire.
         /// </summary>
-        public static string AccessTokenNotExpired {
+        public static string AccessTokenNotExpire {
             get {
-                return ResourceManager.GetString("AccessTokenNotExpired", resourceCulture);
+                return ResourceManager.GetString("AccessTokenNotExpire", resourceCulture);
             }
         }
         

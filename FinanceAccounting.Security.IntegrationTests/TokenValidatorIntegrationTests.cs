@@ -93,7 +93,7 @@ namespace FinanceAccounting.Security.IntegrationTests
         }
 
         [Fact]
-        public void Should_not_be_validated_if_access_token_has_not_yet_expired()
+        public void Should_not_be_validated_if_access_token_does_not_expire()
         {
             var tokenGenerator = new TokenGenerator(_authenticationConfig, _getSigningKeyFunc, _refreshTokenRepo);
             UserAuthenticationResponse response = tokenGenerator.CreateTokensAsync(_user, CancellationToken.None).Result;
@@ -104,7 +104,7 @@ namespace FinanceAccounting.Security.IntegrationTests
                 tokenValidator.IsTokenValid(refreshCommand, CancellationToken.None).Result;
 
             verificationResult.Should().BeFalse();
-            errorMessage.Should().BeEquivalentTo(Resourses.TokenValidator.AccessTokenNotExpired);
+            errorMessage.Should().BeEquivalentTo(Resourses.TokenValidator.AccessTokenNotExpire);
         }
 
         [Fact]

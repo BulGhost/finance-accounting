@@ -8,6 +8,7 @@ namespace FinanceAccounting.WebUI.Services.Interfaces
     {
         Task<RegistrationResponseDto> RegisterUser(RegistrationRequest userForRegistrationDto);
         Task<AuthResponseDto> Login(AuthenticationRequest userForAuthentication);
+        Task<AuthResponseDto> RefreshToken();
         Task Logout();
     }
 }

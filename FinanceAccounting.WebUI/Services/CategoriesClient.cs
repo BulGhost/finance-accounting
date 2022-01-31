@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using System.Net.Http.Json;
+using FinanceAccounting.WebUI.Entities;
+using FinanceAccounting.WebUI.Entities.DTO;
 
 namespace FinanceAccounting.WebUI.Services
 {
@@ -14,12 +16,12 @@ namespace FinanceAccounting.WebUI.Services
         public CategoriesClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:5021/");
+            _httpClient.BaseAddress = new Uri("https://localhost:5021/api/v1/categories/");
         }
 
-        //public async Task<IEnumerable<CategoryDto>> GetCategories(OperationType operationType)
-        //{
-        //    return await _httpClient.GetFromJsonAsync<CategoryDto[]>($"api/categories/{(int)operationType}");
-        //}
+        public async Task<IEnumerable<CategoryDto>> GetCategories(OperationType operationType)
+        {
+            return await _httpClient.GetFromJsonAsync<CategoryDto[]>($"{(int)operationType}");
+        }
     }
 }

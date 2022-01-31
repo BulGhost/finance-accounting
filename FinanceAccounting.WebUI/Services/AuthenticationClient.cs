@@ -6,9 +6,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
-using FinanceAccounting.WebUI.AuthProvider;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Services.AuthProvider;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -60,17 +60,43 @@ namespace FinanceAccounting.WebUI.Services
                 return new AuthResponseDto {IsSucceeded = false, ErrorMessage = errorMessage.GetString()};
             }
 
-            JsonElement accessToken = jsonContent.RootElement.GetProperty("accessToken");
-            JsonElement refreshToken = jsonContent.RootElement.GetProperty("refreshToken");
-            await _localStorage.SetItemAsync("accessToken", accessToken.GetString());
+            string accessToken = jsonContent.RootElement.GetProperty("accessToken").GetString();
+            await _localStorage.SetItemAsync("accessToken", accessToken);
+            string refreshToken = jsonContent.RootElement.GetProperty("refreshToken").GetString();
+            await _localStorage.SetItemAsync("refreshToken", refreshToken);
             ((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.UserName);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken.GetString());
-            return new AuthResponseDto {IsSucceeded = true, AccessToken = accessToken.GetString(), RefreshToken = refreshToken.GetString()};
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            return new AuthResponseDto {IsSucceeded = true, AccessToken = accessToken, RefreshToken = refreshToken};
+        }
+
+        public async Task<AuthResponseDto> RefreshToken()
+        {
+            var accessToken = await _localStorage.GetItemAsync<string>("accessToken");
+            var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
+            string content = JsonSerializer.Serialize(new RefreshTokenRequestDto { Token = accessToken, RefreshToken = refreshToken });
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+            HttpResponseMessage refreshResult = await _httpClient.PostAsync("refresh-token", bodyContent);
+            Stream refreshContent = await refreshResult.Content.ReadAsStreamAsync();
+            JsonDocument jsonContent = await JsonDocument.ParseAsync(refreshContent);
+
+            if (!refreshResult.IsSuccessStatusCode)
+            {
+                JsonElement errorMessage = jsonContent.RootElement.GetProperty("errorMessage");
+                return new AuthResponseDto { IsSucceeded = false, ErrorMessage = errorMessage.GetString() };
+            }
+
+            accessToken = jsonContent.RootElement.GetProperty("accessToken").GetString();
+            await _localStorage.SetItemAsync("accessToken", accessToken);
+            refreshToken = jsonContent.RootElement.GetProperty("refreshToken").GetString();
+            await _localStorage.SetItemAsync("refreshToken", refreshToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            return new AuthResponseDto { IsSucceeded = true, AccessToken = accessToken, RefreshToken = refreshToken };
         }
 
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync("accessToken");
+            await _localStorage.RemoveItemAsync("refreshToken");
             ((CustomAuthStateProvider)_authStateProvider).NotifyUserLogout();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }

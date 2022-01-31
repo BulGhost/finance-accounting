@@ -12,6 +12,7 @@ namespace FinanceAccounting.Security
 {
     public class TokenValidator : ITokenValidator
     {
+        private const double _timeIntervalInSecondsUntilTokenExpirationWhenTokenIsConsideredToExpiring = 90;
         private readonly TokenValidationParameters _tokenValidationParams;
         private readonly IRefreshTokenRepo _refreshTokenRepo;
 
@@ -26,9 +27,14 @@ namespace FinanceAccounting.Security
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             try
             {
-                jwtTokenHandler.ValidateToken(refreshTokenCommand.AccessToken, _tokenValidationParams, out _);
+                //jwtTokenHandler.ValidateToken(refreshTokenCommand.AccessToken, _tokenValidationParams, out _);
 
-                return (false, Resourses.TokenValidator.AccessTokenNotExpired);
+                //return (false, Resourses.TokenValidator.AccessTokenNotExpired);
+                jwtTokenHandler.ValidateToken(refreshTokenCommand.AccessToken, _tokenValidationParams, out SecurityToken validatedToken);
+
+                return validatedToken.ValidTo < DateTime.UtcNow.AddSeconds(_timeIntervalInSecondsUntilTokenExpirationWhenTokenIsConsideredToExpiring)
+                    ? (true, string.Empty)
+                    : (false, Resourses.TokenValidator.AccessTokenNotExpire);
             }
             catch (SecurityTokenExpiredException)
             {
