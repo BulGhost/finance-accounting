@@ -4,11 +4,11 @@ using FinanceAccounting.WebUI.Entities.Models;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 
-namespace FinanceAccounting.WebUI.Pages
+namespace FinanceAccounting.WebUI.Pages.Authentication
 {
-    public partial class Login
+    public partial class Registration
     {
-        private AuthenticationRequest _authenticationRequest = new();
+        private RegistrationRequest _userForRegistration = new();
 
         [Inject]
         public IAuthenticationClient AuthenticationClient { get; set; }
@@ -16,17 +16,17 @@ namespace FinanceAccounting.WebUI.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        public bool ShowAuthError { get; set; }
+        public bool ShowRegistrationError { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task ExecuteLogin()
+        public async Task Register()
         {
-            ShowAuthError = false;
-            AuthResponseDto result = await AuthenticationClient.Login(_authenticationRequest);
-            if (!result.IsSucceeded)
+            ShowRegistrationError = false;
+            RegistrationResponseDto response = await AuthenticationClient.RegisterUser(_userForRegistration);
+            if (!response.IsSucceeded)
             {
-                ErrorMessage = result.ErrorMessage;
-                ShowAuthError = true;
+                ErrorMessage = response.ErrorMessage;
+                ShowRegistrationError = true;
             }
             else
             {

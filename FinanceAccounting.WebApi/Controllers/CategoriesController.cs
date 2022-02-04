@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FinanceAccounting.BusinessLogic.Categories.Commands.CreateCategories;
 using FinanceAccounting.BusinessLogic.Categories.Commands.DeleteCategories;
 using FinanceAccounting.BusinessLogic.Categories.Commands.UpdateCategories;
+using FinanceAccounting.BusinessLogic.Categories.Queries.GetCategoryById;
 using FinanceAccounting.BusinessLogic.Categories.Queries.GetListOfCategories;
 using FinanceAccounting.BusinessLogic.Common.DataTransferObjects.CategoryDto;
 using FinanceAccounting.Domain.Entities;
@@ -44,6 +45,31 @@ namespace FinanceAccounting.WebApi.Controllers
             OperationType operationType, CancellationToken cancellationToken = default)
         {
             var query = new GetCategoriesQuery(UserId, operationType);
+            var viewModel = await Mediator.Send(query, cancellationToken);
+            return Ok(viewModel);
+        }
+
+        /// <summary>
+        /// Gets the required category by Id
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///     GET /api/v1/categories/find-by-id/5
+        /// </remarks>
+        /// <param name="categoryId">Category Id</param>
+        /// <param name="cancellationToken">Optional cancellation token</param>
+        /// <returns>Category with the specified id</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">If the category with the specified id is not found</response>
+        /// <response code="401">If the user is unauthorized</response>
+        [HttpGet("find-by-id/{categoryId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetCategoryById(
+            int categoryId, CancellationToken cancellationToken = default)
+        {
+            var query = new GetCategoryByIdQuery(UserId, categoryId);
             var viewModel = await Mediator.Send(query, cancellationToken);
             return Ok(viewModel);
         }

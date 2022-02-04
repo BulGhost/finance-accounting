@@ -1,0 +1,27 @@
+﻿@page "/categories/edit/{id}"
+@attribute [Authorize]
+
+<h3>Edit Category</h3>
+
+@if (ShowError)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@ErrorMessage</p>
+    </div>
+}
+
+<EditForm Model="_category" OnValidSubmit="UpdateCategory" class="card card-body bg-light mt-5">
+    <DataAnnotationsValidator />
+    <div class="form-group row">
+        <label for="category-name" class="col-md-2 col-form-label">Category name:</label>
+        <div class="col-md-10">
+            <InputText id="category-name" class="form-control" @bind-Value="_category.Name"/>
+            <ValidationMessage For="@(() => _category.Name)" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-success">Update</button>
+        </div>
+    </div>
+</EditForm>

@@ -1,0 +1,53 @@
+﻿@page "/categories"
+@*@attribute [Authorize]*@
+@using FinanceAccounting.WebUI.Entities.DTO
+
+<h3>Category List</h3>
+@if (Categories == null)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-outline-primary @(OperationType == OperationType.Income ? "active" : "")">
+            <input type="radio" name="options" id="option1" autocomplete="off" @onchange="() => OperationType = OperationType.Income"> Income
+        </label>
+        <label class="btn btn-outline-primary @(OperationType == OperationType.Expense ? "active" : "")">
+            <input type="radio" name="options" id="option2" autocomplete="off" @onchange="() => OperationType = OperationType.Expense"> Expense
+        </label>
+    </div>
+    <a href="/categories/create" class="btn btn-primary align-items-center mb-3" style="float: right">Add new</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Category name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{ _counter = 0; }
+        @foreach (CategoryDto category in Categories.Where(category => category.Type == OperationType))
+        {
+            <tr>
+                <th scope="row">@(++_counter)</th>
+                <td>@category.CategoryName</td>
+                <td>@category.Type</td>
+                <td>
+                    <a href="/categories/edit/@category.Id" class="btn btn-primary">Edit</a>
+                    <button type="button" class="btn btn-danger" @onclick="() => DeleteCategory_Click(category)">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<Confirmation ConfirmationChanged="ConfirmDeleteCategory_Click"
+              ConfirmationMessage=@($"Are you sure you want to delete the \"{_сategoryToDelete.CategoryName}\" category")
+              @ref="DeleteConfirmation"></Confirmation>

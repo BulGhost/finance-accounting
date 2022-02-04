@@ -25,7 +25,7 @@ namespace FinanceAccounting.DataAccess.Initialization
 
         internal static async Task DropAndCreateDatabase(BookkeepingDbContext context)
         {
-            await context.Database.EnsureDeletedAsync();
+            //await context.Database.EnsureDeletedAsync();
             await context.Database.MigrateAsync();
         }
 

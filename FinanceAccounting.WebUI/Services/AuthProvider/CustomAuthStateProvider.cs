@@ -28,7 +28,7 @@ namespace FinanceAccounting.WebUI.Services.AuthProvider
                 return _anonymous;
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
             return JwtParser.TryParseClaimsFromJwt(token, out var userClaims)
                 ? new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(userClaims, "jwtAuthType")))
                 : _anonymous;

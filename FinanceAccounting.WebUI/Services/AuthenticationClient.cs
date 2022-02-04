@@ -65,7 +65,7 @@ namespace FinanceAccounting.WebUI.Services
             string refreshToken = jsonContent.RootElement.GetProperty("refreshToken").GetString();
             await _localStorage.SetItemAsync("refreshToken", refreshToken);
             ((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.UserName);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             return new AuthResponseDto {IsSucceeded = true, AccessToken = accessToken, RefreshToken = refreshToken};
         }
 
@@ -89,7 +89,7 @@ namespace FinanceAccounting.WebUI.Services
             await _localStorage.SetItemAsync("accessToken", accessToken);
             refreshToken = jsonContent.RootElement.GetProperty("refreshToken").GetString();
             await _localStorage.SetItemAsync("refreshToken", refreshToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             return new AuthResponseDto { IsSucceeded = true, AccessToken = accessToken, RefreshToken = refreshToken };
         }
 
@@ -98,7 +98,7 @@ namespace FinanceAccounting.WebUI.Services
             await _localStorage.RemoveItemAsync("accessToken");
             await _localStorage.RemoveItemAsync("refreshToken");
             ((CustomAuthStateProvider)_authStateProvider).NotifyUserLogout();
-            _httpClient.DefaultRequestHeaders.Authorization = null;
+            //_httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }
 }

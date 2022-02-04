@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,11 +7,11 @@ using FinanceAccounting.WebUI.Entities.DTO;
 
 namespace FinanceAccounting.WebUI.Services
 {
-    public class TokenMessageHandler : DelegatingHandler
+    public class JwtTokenHeaderHandler : DelegatingHandler
     {
         private readonly RefreshTokenService _refreshTokenService;
 
-        public TokenMessageHandler(RefreshTokenService refreshTokenService)
+        public JwtTokenHeaderHandler(RefreshTokenService refreshTokenService)
         {
             _refreshTokenService = refreshTokenService;
         }
@@ -21,7 +22,16 @@ namespace FinanceAccounting.WebUI.Services
 
             if (!path.Contains("register") && !path.Contains("login") && !path.Contains("refresh-token"))
             {
-                AuthResponseDto authResponse = await _refreshTokenService.TryRefreshToken();
+                AuthResponseDto authResponse = null;
+                try
+                {
+                    authResponse = await _refreshTokenService.TryRefreshToken();
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
                 if (authResponse.IsSucceeded)
                 {
                     request.Headers.Authorization = new AuthenticationHeaderValue("bearer", authResponse.AccessToken);

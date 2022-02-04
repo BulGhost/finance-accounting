@@ -19,7 +19,7 @@ namespace FinanceAccounting.WebUI.Services.AuthProvider
             claims = new List<Claim>();
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(payload);
             claims.AddRange(keyValuePairs!.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString() ?? string.Empty)));
-            return false;
+            return true;
         }
 
         private static bool IsJwt(string jwt, out byte[] payloadAsJsonBytes)

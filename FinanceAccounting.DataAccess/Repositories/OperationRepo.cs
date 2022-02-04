@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FinanceAccounting.DataAccess.DbContext;
 using FinanceAccounting.DataAccess.Repositories.Base;
@@ -16,22 +17,30 @@ namespace FinanceAccounting.DataAccess.Repositories
         {
         }
 
-        public async Task<OperationType> GetOperationTypeByCategoryIdAsync(int categoryId)
+        public async Task<OperationType> GetOperationTypeByCategoryIdAsync(int categoryId, CancellationToken cancellationToken = default)
         {
-            Category category = await Context.Categories.FindAsync(categoryId);
+            Category category = await Context.Categories.FindAsync(new object[] {categoryId}, cancellationToken);
             return category.Type;
         }
 
-        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateAsync(int userId, DateTime date)
+        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateAsync(int userId, DateTime date, CancellationToken cancellationToken = default)
         {
-            return await Table.Where(operation => operation.UserId == userId && operation.Date == date).ToListAsync();
+            return await Table.Where(operation => operation.UserId == userId && operation.Date == date)
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateRangeAsync(int userId, DateTime startDate, DateTime finalDate)
+        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateRangeAsync(int userId, DateTime startDate, DateTime finalDate, CancellationToken cancellationToken = default)
         {
             return await Table.Where(operation => operation.UserId == userId &&
                                                   operation.Date >= startDate &&
-                                                  operation.Date <= finalDate).ToListAsync();
+                                                  operation.Date <= finalDate)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Operation> GetUserOperationByIdAsync(int userId, int operationId, CancellationToken cancellationToken = default)
+        {
+            return await Table.Where(o => o.UserId == userId && o.Id == operationId)
+                .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

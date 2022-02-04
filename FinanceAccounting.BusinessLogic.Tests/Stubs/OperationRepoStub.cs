@@ -132,23 +132,29 @@ namespace FinanceAccounting.BusinessLogic.Tests.Stubs
             return Task.FromResult(0);
         }
 
-        public async Task<OperationType> GetOperationTypeByCategoryIdAsync(int categoryId)
+        public async Task<OperationType> GetOperationTypeByCategoryIdAsync(int categoryId, CancellationToken cancellationToken = default)
         {
             return (await _categoryRepo.FindAsync(categoryId)).Type;
         }
 
-        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateAsync(int userId, DateTime date)
+        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateAsync(int userId, DateTime date, CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(_operationList
                 .Where(operation => operation.UserId == userId && operation.Date == date).ToList());
         }
 
-        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateRangeAsync(int userId, DateTime startDate, DateTime finalDate)
+        public async Task<IEnumerable<Operation>> GetUserOperationsOnDateRangeAsync(int userId, DateTime startDate, DateTime finalDate, CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(_operationList
                 .Where(operation => operation.UserId == userId &&
                                     operation.Date >= startDate &&
                                     operation.Date <= finalDate).ToList());
+        }
+
+        public async Task<Operation> GetUserOperationByIdAsync(int userId, int operationId, CancellationToken cancellationToken = default)
+        {
+            return await Task.FromResult(_operationList
+                .SingleOrDefault(operation => operation.UserId == userId && operation.Id == operationId));
         }
     }
 }

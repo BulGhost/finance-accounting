@@ -141,5 +141,11 @@ namespace FinanceAccounting.BusinessLogic.Tests.Stubs
             return Task.FromResult(_categoryList
                 .Where(c => c.UserId == userId && c.Type == operationType));
         }
+
+        public Task<Category> GetUserCategoryByIdAsync(int userId, int categoryId, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(_categoryList
+                .SingleOrDefault(c => c.UserId == userId && c.Id == categoryId));
+        }
     }
 }

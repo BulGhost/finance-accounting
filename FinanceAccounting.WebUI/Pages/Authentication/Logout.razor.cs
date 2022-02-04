@@ -2,7 +2,7 @@
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 
-namespace FinanceAccounting.WebUI.Pages
+namespace FinanceAccounting.WebUI.Pages.Authentication
 {
     public partial class Logout
     {

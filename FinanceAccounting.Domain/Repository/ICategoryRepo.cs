@@ -9,5 +9,6 @@ namespace FinanceAccounting.Domain.Repository
     {
         Task<bool> IsCategoryExistsAsync(int userId, OperationType operationType, string categoryName, CancellationToken cancellationToken = default);
         Task<IEnumerable<Category>> GetUserCategoriesAsync(int userId, OperationType operationType, CancellationToken cancellationToken = default);
+        Task<Category> GetUserCategoryByIdAsync(int userId, int categoryId, CancellationToken cancellationToken = default);
     }
 }

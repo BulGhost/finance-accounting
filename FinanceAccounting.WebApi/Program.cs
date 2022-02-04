@@ -16,7 +16,6 @@ namespace FinanceAccounting.WebApi
     {
         public static async Task Main(string[] args)
         {
-            //Logger logger = NLogBuilder.ConfigureNLog("Nlog.config").GetCurrentClassLogger();
             Logger logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
             try

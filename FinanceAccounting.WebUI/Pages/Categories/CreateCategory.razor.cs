@@ -4,33 +4,33 @@ using FinanceAccounting.WebUI.Entities.Models;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 
-namespace FinanceAccounting.WebUI.Pages
+namespace FinanceAccounting.WebUI.Pages.Categories
 {
-    public partial class Registration
+    public partial class CreateCategory
     {
-        private RegistrationRequest _userForRegistration = new();
+        private CreateCategoryRequest _category = new();
 
         [Inject]
-        public IAuthenticationClient AuthenticationClient { get; set; }
+        public ICategoriesClient CategoriesClient { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        public bool ShowRegistrationError { get; set; }
+        public bool ShowError { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task Register()
+        public async Task AddNewCategory()
         {
-            ShowRegistrationError = false;
-            RegistrationResponseDto response = await AuthenticationClient.RegisterUser(_userForRegistration);
+            ShowError = false;
+            CommandResponseDto response = await CategoriesClient.CreateCategory(_category);
             if (!response.IsSucceeded)
             {
                 ErrorMessage = response.ErrorMessage;
-                ShowRegistrationError = true;
+                ShowError = true;
             }
             else
             {
-                NavigationManager.NavigateTo("/");
+                NavigationManager.NavigateTo("/categories");
             }
         }
     }

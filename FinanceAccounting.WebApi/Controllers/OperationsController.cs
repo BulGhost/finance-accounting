@@ -7,6 +7,7 @@ using FinanceAccounting.BusinessLogic.Operations.Commands.AddOperations;
 using FinanceAccounting.BusinessLogic.Operations.Commands.DeleteOperations;
 using FinanceAccounting.BusinessLogic.Operations.Commands.UpdateOperations;
 using FinanceAccounting.BusinessLogic.Operations.Queries.GetDaysOperationsReport;
+using FinanceAccounting.BusinessLogic.Operations.Queries.GetOperationById;
 using FinanceAccounting.BusinessLogic.Operations.Queries.GetPeriodsOperationsReport;
 using FinanceAccounting.WebApi.Controllers.Base;
 using FinanceAccounting.WebApi.ViewModels;
@@ -50,6 +51,31 @@ namespace FinanceAccounting.WebApi.Controllers
             var operations = await Mediator.Send(query, cancellationToken);
             OperationsReport report = new ReportBuilder().BuildOperationsReport(operations);
             return Ok(report);
+        }
+
+        /// <summary>
+        /// Gets the required operation by Id
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///     GET /api/v1/operations/5
+        /// </remarks>
+        /// <param name="operationId">Operation Id</param>
+        /// <param name="cancellationToken">Optional cancellation token</param>
+        /// <returns>Operation with the specified id</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">If the operation with the specified id is not found</response>
+        /// <response code="401">If the user is unauthorized</response>
+        [HttpGet("{operationId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetOperationById(
+            int operationId, CancellationToken cancellationToken = default)
+        {
+            var query = new GetOperationByIdQuery(UserId, operationId);
+            var viewModel = await Mediator.Send(query, cancellationToken);
+            return Ok(viewModel);
         }
 
         /// <summary>

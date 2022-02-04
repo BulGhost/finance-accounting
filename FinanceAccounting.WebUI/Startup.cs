@@ -1,14 +1,9 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using FinanceAccounting.WebUI.Services;
 using FinanceAccounting.WebUI.Services.AuthProvider;
@@ -35,9 +30,9 @@ namespace FinanceAccounting.WebUI
             services.AddAuthorizationCore();
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             services.AddHttpClient<IAuthenticationClient, AuthenticationClient>();
-            services.AddTransient<TokenMessageHandler>();
+            services.AddTransient<JwtTokenHeaderHandler>();
             services.AddHttpClient<ICategoriesClient, CategoriesClient>()
-                .AddHttpMessageHandler<TokenMessageHandler>()
+                .AddHttpMessageHandler<JwtTokenHeaderHandler>()
                 .AddTransientHttpErrorPolicy(policy =>
                     policy.WaitAndRetryAsync(new[]
                     {
@@ -64,7 +59,6 @@ namespace FinanceAccounting.WebUI
             app.UseStaticFiles();
 
             app.UseRouting();
-            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -29,5 +29,11 @@ namespace FinanceAccounting.DataAccess.Repositories
             return await Table.Where(c => c.UserId == userId && c.Type == operationType)
                 .ToListAsync(cancellationToken);
         }
+
+        public async Task<Category> GetUserCategoryByIdAsync(int userId, int categoryId, CancellationToken cancellationToken = default)
+        {
+            return await Table.Where(c => c.UserId == userId && c.Id == categoryId)
+                .SingleOrDefaultAsync(cancellationToken);
+        }
     }
 }
