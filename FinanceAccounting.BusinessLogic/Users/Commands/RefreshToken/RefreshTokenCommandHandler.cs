@@ -35,7 +35,7 @@ namespace FinanceAccounting.BusinessLogic.Users.Commands.RefreshToken
                 throw new TokenValidationException(errorMessage);
             }
 
-            Common.Models.RefreshToken refreshToken = await _refreshTokenRepo.FindByTokenStringAsync(request.RefreshToken, cancellationToken);
+            RefreshTokenModel refreshToken = await _refreshTokenRepo.FindByTokenStringAsync(request.RefreshToken, cancellationToken);
             refreshToken.IsUsed = true;
             await _refreshTokenRepo.SaveAsync(cancellationToken);
 

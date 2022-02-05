@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -65,7 +64,6 @@ namespace FinanceAccounting.WebUI.Services
             string refreshToken = jsonContent.RootElement.GetProperty("refreshToken").GetString();
             await _localStorage.SetItemAsync("refreshToken", refreshToken);
             ((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.UserName);
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             return new AuthResponseDto {IsSucceeded = true, AccessToken = accessToken, RefreshToken = refreshToken};
         }
 
@@ -73,7 +71,7 @@ namespace FinanceAccounting.WebUI.Services
         {
             var accessToken = await _localStorage.GetItemAsync<string>("accessToken");
             var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
-            string content = JsonSerializer.Serialize(new RefreshTokenRequestDto { Token = accessToken, RefreshToken = refreshToken });
+            string content = JsonSerializer.Serialize(new RefreshTokenRequestDto { AccessToken = accessToken, RefreshToken = refreshToken });
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
             HttpResponseMessage refreshResult = await _httpClient.PostAsync("refresh-token", bodyContent);
             Stream refreshContent = await refreshResult.Content.ReadAsStreamAsync();
@@ -89,7 +87,6 @@ namespace FinanceAccounting.WebUI.Services
             await _localStorage.SetItemAsync("accessToken", accessToken);
             refreshToken = jsonContent.RootElement.GetProperty("refreshToken").GetString();
             await _localStorage.SetItemAsync("refreshToken", refreshToken);
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             return new AuthResponseDto { IsSucceeded = true, AccessToken = accessToken, RefreshToken = refreshToken };
         }
 
@@ -98,7 +95,6 @@ namespace FinanceAccounting.WebUI.Services
             await _localStorage.RemoveItemAsync("accessToken");
             await _localStorage.RemoveItemAsync("refreshToken");
             ((CustomAuthStateProvider)_authStateProvider).NotifyUserLogout();
-            //_httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }
 }

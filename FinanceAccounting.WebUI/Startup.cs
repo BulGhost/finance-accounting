@@ -30,9 +30,7 @@ namespace FinanceAccounting.WebUI
             services.AddAuthorizationCore();
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             services.AddHttpClient<IAuthenticationClient, AuthenticationClient>();
-            services.AddTransient<JwtTokenHeaderHandler>();
             services.AddHttpClient<ICategoriesClient, CategoriesClient>()
-                .AddHttpMessageHandler<JwtTokenHeaderHandler>()
                 .AddTransientHttpErrorPolicy(policy =>
                     policy.WaitAndRetryAsync(new[]
                     {
@@ -40,7 +38,7 @@ namespace FinanceAccounting.WebUI
                         TimeSpan.FromSeconds(1),
                         TimeSpan.FromSeconds(3)
                     }));
-            services.AddScoped<RefreshTokenService>();
+            services.AddScoped<TokenService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Services.Interfaces;
@@ -14,37 +15,42 @@ using FinanceAccounting.WebUI.Exceptions;
 
 namespace FinanceAccounting.WebUI.Services
 {
-    public class CategoriesClient : ICategoriesClient
+    public class CategoriesClient : ICategoriesClient, IDisposable
     {
-        private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
+        private readonly Lazy<Task<HttpClient>> _configuredHttpClient;
 
-        public CategoriesClient(HttpClient httpClient)
+        public CategoriesClient(HttpClient httpClient, TokenService tokenService)
         {
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:5021/api/v1/categories/");
+            _configuredHttpClient = new Lazy<Task<HttpClient>>(async () =>
+            {
+                httpClient.BaseAddress = new Uri("https://localhost:5021/api/v1/categories/");
+                string accessToken = await tokenService.GetActualAccessToken();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+                return httpClient;
+            });
         }
 
-        public async Task<List<CategoryDto>> GetCategories(OperationType operationType)
+        public async Task<List<CategoryDto>> GetAllCategories()
         {
-            HttpResponseMessage getCategoriesResult = await _httpClient.GetAsync($"{(int)operationType}");
-            string jsonContent = await getCategoriesResult.Content.ReadAsStringAsync();
-
-            if (getCategoriesResult.IsSuccessStatusCode)
-            {
-                return JsonSerializer.Deserialize<List<CategoryDto>>(jsonContent);
-            }
-
-            throw new UnsuccessfulResponseException("Fail on getting categories attempt");
+            HttpClient httpClient = await _configuredHttpClient.Value;
+            var categoryList = new List<CategoryDto>();
+            var incomeCategories = await GetCategoriesOfType(OperationType.Income, httpClient);
+            categoryList.AddRange(incomeCategories);
+            var expenseCategories = await GetCategoriesOfType(OperationType.Expense, httpClient);
+            categoryList.AddRange(expenseCategories);
+            return categoryList;
         }
 
         public async Task<CategoryDto> GetCategoryById(int categoryId)
         {
-            HttpResponseMessage getCategoriesResult = await _httpClient.GetAsync($"find-by-id/{categoryId}");
+            HttpClient httpClient = await _configuredHttpClient.Value;
+            HttpResponseMessage getCategoriesResult = await httpClient.GetAsync($"find-by-id/{categoryId}");
             string jsonContent = await getCategoriesResult.Content.ReadAsStringAsync();
 
             if (getCategoriesResult.IsSuccessStatusCode)
             {
-                return JsonSerializer.Deserialize<CategoryDto>(jsonContent);
+                return JsonSerializer.Deserialize<CategoryDto>(jsonContent, _options);
             }
 
             throw new UnsuccessfulResponseException("Fail on getting category attempt");
@@ -55,7 +61,8 @@ namespace FinanceAccounting.WebUI.Services
             string content = JsonSerializer.Serialize(new List<CreateCategoryRequest> {newCategory});
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage categoryCreationResult = await _httpClient.PostAsync(string.Empty, bodyContent);
+            HttpClient httpClient = await _configuredHttpClient.Value;
+            HttpResponseMessage categoryCreationResult = await httpClient.PostAsync(string.Empty, bodyContent);
 
             return await RetrieveHttpResponseMessageAsync(categoryCreationResult);
         }
@@ -65,7 +72,8 @@ namespace FinanceAccounting.WebUI.Services
             string content = JsonSerializer.Serialize(new List<UpdateCategoryRequest> {updatedCategory});
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage categoryUpdatingResult = await _httpClient.PutAsync(string.Empty, bodyContent);
+            HttpClient httpClient = await _configuredHttpClient.Value;
+            HttpResponseMessage categoryUpdatingResult = await httpClient.PutAsync(string.Empty, bodyContent);
 
             return await RetrieveHttpResponseMessageAsync(categoryUpdatingResult);
         }
@@ -77,9 +85,31 @@ namespace FinanceAccounting.WebUI.Services
                 Content = JsonContent.Create(new List<int> { categoryId }),
                 Method = HttpMethod.Delete
             };
-            HttpResponseMessage categoryDeletingResult = await _httpClient.SendAsync(request);
+            HttpClient httpClient = await _configuredHttpClient.Value;
+            HttpResponseMessage categoryDeletingResult = await httpClient.SendAsync(request);
 
             return await RetrieveHttpResponseMessageAsync(categoryDeletingResult);
+        }
+
+        public void Dispose()
+        {
+            if (_configuredHttpClient.IsValueCreated)
+            {
+                _configuredHttpClient.Value.Dispose();
+            }
+        }
+
+        private async Task<List<CategoryDto>> GetCategoriesOfType(OperationType operationType, HttpClient httpClient)
+        {
+            HttpResponseMessage getCategoriesResult = await httpClient.GetAsync($"{(int)operationType}");
+            string jsonContent = await getCategoriesResult.Content.ReadAsStringAsync();
+
+            if (getCategoriesResult.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<List<CategoryDto>>(jsonContent, _options);
+            }
+
+            throw new UnsuccessfulResponseException("Fail on getting categories attempt");
         }
 
         private async Task<CommandResponseDto> RetrieveHttpResponseMessageAsync(HttpResponseMessage responseMessage)
