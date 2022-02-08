@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 
 namespace FinanceAccounting.WebUI.Pages.Authentication
 {
@@ -11,26 +13,37 @@ namespace FinanceAccounting.WebUI.Pages.Authentication
         private AuthenticationRequest _authenticationRequest = new();
 
         [Inject]
-        public IAuthenticationClient AuthenticationClient { get; set; }
+        private IAuthenticationClient AuthenticationClient { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        private NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        private ILogger<Login> Logger { get; set; }
 
         public bool ShowAuthError { get; set; }
         public string ErrorMessage { get; set; }
 
         public async Task ExecuteLogin()
         {
-            ShowAuthError = false;
-            AuthResponseDto result = await AuthenticationClient.Login(_authenticationRequest);
-            if (!result.IsSucceeded)
+            try
             {
-                ErrorMessage = result.ErrorMessage;
-                ShowAuthError = true;
+                ShowAuthError = false;
+                AuthResponseDto result = await AuthenticationClient.Login(_authenticationRequest);
+                if (!result.IsSucceeded)
+                {
+                    ErrorMessage = result.ErrorMessage;
+                    ShowAuthError = true;
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/", true);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                NavigationManager.NavigateTo("/");
+                Logger.LogError(ex, "Error on login request submit");
+                NavigationManager.NavigateTo("/error");
             }
         }
     }

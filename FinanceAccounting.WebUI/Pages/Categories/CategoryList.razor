@@ -1,51 +1,57 @@
 ﻿@page "/categories"
-@*@attribute [Authorize]*@
+@attribute [Authorize]
 @using FinanceAccounting.WebUI.Entities.DTO
 
-<h3>Category List</h3>
-@if (Categories == null)
+<h3 class="text-center mb-3">Category List</h3>
+@if (Categories != null)
 {
-    <div class="spinner"></div>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-outline-primary @(OperationType == OperationType.Income ? "active" : "")">
+                    <input type="radio" name="options" id="option1" autocomplete="off" @onchange="() => OperationType = OperationType.Income"> Income
+                </label>
+                <label class="btn btn-outline-primary @(OperationType == OperationType.Expense ? "active" : "")">
+                    <input type="radio" name="options" id="option2" autocomplete="off" @onchange="() => OperationType = OperationType.Expense"> Expense
+                </label>
+            </div>
+            <a href="/categories/create" class="btn btn-primary align-items-center mb-3" style="float: right">Add new</a>
+        </div>
+
+        <table class="table table-striped col-8">
+            <thead>
+            <tr>
+                <th scope="col" wigth="5%">#</th>
+                <th scope="col" wigth="50%">Category name</th>
+                <th scope="col" class="text-right align-middle pr-5">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @{ _counter = 0; }
+            @foreach (CategoryDto category in Categories
+                .Where(category => category.Type == OperationType)
+                .OrderBy(c => c.CategoryName))
+            {
+                <tr>
+                    <th scope="row" wigth="5%" class="align-middle">@(++_counter)</th>
+                    <td wigth="50%" class="align-middle">@category.CategoryName</td>
+                    <td class="text-right align-middle">
+                        <a href="/categories/edit/@category.Id" class="btn btn-primary mr-3">Edit</a>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteCategory_Click(category)">Delete</button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else if (_loadFailed)
+{
+    <h1>Sorry, we could not load categories due to an error.</h1>
 }
 else
 {
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-outline-primary @(OperationType == OperationType.Income ? "active" : "")">
-            <input type="radio" name="options" id="option1" autocomplete="off" @onchange="() => OperationType = OperationType.Income"> Income
-        </label>
-        <label class="btn btn-outline-primary @(OperationType == OperationType.Expense ? "active" : "")">
-            <input type="radio" name="options" id="option2" autocomplete="off" @onchange="() => OperationType = OperationType.Expense"> Expense
-        </label>
-    </div>
-    <a href="/categories/create" class="btn btn-primary align-items-center mb-3" style="float: right">Add new</a>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Category name</th>
-                <th scope="col">Type</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        @{ _counter = 0; }
-        @foreach (CategoryDto category in Categories.Where(category => category.Type == OperationType))
-        {
-            <tr>
-                <th scope="row">@(++_counter)</th>
-                <td>@category.CategoryName</td>
-                <td>@category.Type</td>
-                <td>
-                    <a href="/categories/edit/@category.Id" class="btn btn-primary">Edit</a>
-                    <button type="button" class="btn btn-danger" @onclick="() => DeleteCategory_Click(category)">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <div class="spinner"></div>
 }
 
 <Confirmation ConfirmationChanged="ConfirmDeleteCategory_Click"

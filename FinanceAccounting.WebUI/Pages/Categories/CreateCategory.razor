@@ -1,5 +1,5 @@
 ﻿@page "/categories/create"
-@*@attribute [Authorize]*@
+@attribute [Authorize]
 
 <h3>Create Category</h3>
 
@@ -11,7 +11,7 @@
     </div>
 }
 
-<EditForm Model="_category" OnValidSubmit="AddNewCategory" class="card card-body bg-light mt-5">
+<EditForm Model="_category" OnValidSubmit="AddNewCategory" class="card card-body bg-light mt-3">
     <DataAnnotationsValidator />
     <div class="form-group row">
         <label for="category-type" class="col-md-2 col-form-label">Type:</label>
@@ -33,7 +33,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 text-right">
+        <div class="col-md-12 text-left">
             <button type="submit" class="btn btn-success">Create</button>
         </div>
     </div>

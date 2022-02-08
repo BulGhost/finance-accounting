@@ -27,7 +27,7 @@ namespace FinanceAccounting.WebUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazoredLocalStorage();
-            services.AddAuthorizationCore();
+            //services.AddAuthorizationCore();
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             services.AddHttpClient<IAuthenticationClient, AuthenticationClient>();
             services.AddHttpClient<ICategoriesClient, CategoriesClient>()
@@ -47,17 +47,12 @@ namespace FinanceAccounting.WebUI
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
 
+            app.UseHsts();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

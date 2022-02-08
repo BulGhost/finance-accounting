@@ -1,36 +1,55 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Exceptions;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 
 namespace FinanceAccounting.WebUI.Pages.Categories
 {
     public partial class CreateCategory
     {
-        private CreateCategoryRequest _category = new();
+        private readonly CreateCategoryRequest _category = new();
 
         [Inject]
-        public ICategoriesClient CategoriesClient { get; set; }
+        private ICategoriesClient CategoriesClient { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        private NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        private ILogger<CreateCategory> Logger { get; set; }
 
         public bool ShowError { get; set; }
         public string ErrorMessage { get; set; }
 
         public async Task AddNewCategory()
         {
-            ShowError = false;
-            CommandResponseDto response = await CategoriesClient.CreateCategory(_category);
-            if (!response.IsSucceeded)
+            try
             {
-                ErrorMessage = response.ErrorMessage;
-                ShowError = true;
+                ShowError = false;
+                CommandResponseDto response = await CategoriesClient.CreateCategory(_category);
+                if (!response.IsSucceeded)
+                {
+                    ErrorMessage = response.ErrorMessage;
+                    ShowError = true;
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/categories");
+                }
             }
-            else
+            catch (CustomAuthenticationException)
             {
-                NavigationManager.NavigateTo("/categories");
+                Logger.LogInformation("Attempt to gain access with invalid token");
+                NavigationManager.NavigateTo("/logout");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed on new category addition");
+                NavigationManager.NavigateTo("/error");
             }
         }
     }

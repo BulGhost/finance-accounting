@@ -1,20 +1,18 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Exceptions;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 
 namespace FinanceAccounting.WebUI.Pages.Categories
 {
     public partial class EditCategory
     {
-        private UpdateCategoryRequest _category = new();
-
-        [Inject]
-        public ICategoriesClient CategoriesClient { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        private bool _loadFailed;
+        private UpdateCategoryRequest _category;
 
         [Parameter]
         public string Id { get; set; }
@@ -22,26 +20,56 @@ namespace FinanceAccounting.WebUI.Pages.Categories
         public bool ShowError { get; set; }
         public string ErrorMessage { get; set; }
 
+        [Inject]
+        private ICategoriesClient CategoriesClient { get; set; }
+
+        [Inject]
+        private NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        private ILogger<EditCategory> Logger { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
-            CategoryDto categoryToUpdate = await CategoriesClient.GetCategoryById(int.Parse(Id));
+            try
+            {
+                _loadFailed = false;
+                CategoryDto categoryToUpdate = await CategoriesClient.GetCategoryById(int.Parse(Id));
 
-            _category.Id = categoryToUpdate.Id;
-            _category.Name = categoryToUpdate.CategoryName;
+                _category = new UpdateCategoryRequest {Id = categoryToUpdate.Id, Name = categoryToUpdate.CategoryName};
+            }
+            catch (CustomAuthenticationException)
+            {
+                Logger.LogInformation("Attempt to gain access with invalid token");
+                NavigationManager.NavigateTo("/logout");
+            }
+            catch (Exception ex)
+            {
+                _loadFailed = true;
+                Logger.LogError(ex, "Failed to get category");
+            }
         }
 
         public async Task UpdateCategory()
         {
-            ShowError = false;
-            CommandResponseDto response = await CategoriesClient.UpdateCategory(_category);
-            if (!response.IsSucceeded)
+            try
             {
-                ErrorMessage = response.ErrorMessage;
-                ShowError = true;
+                ShowError = false;
+                CommandResponseDto response = await CategoriesClient.UpdateCategory(_category);
+                if (!response.IsSucceeded)
+                {
+                    ErrorMessage = response.ErrorMessage;
+                    ShowError = true;
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/categories");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                NavigationManager.NavigateTo("/categories");
+                Logger.LogError(ex, "Failed on category updating");
+                NavigationManager.NavigateTo("/error");
             }
         }
     }

@@ -1,7 +1,12 @@
-﻿<AuthorizeView>
+﻿@using System.Security.Claims
+<AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity!.Name
-        <a href="logout">Log out</a>
+        @{
+            Claim username = context.User.Claims.FirstOrDefault(c => c.Type == "name");
+        }
+        <span class="oi oi-person mr-3" aria-hidden="true"></span>
+        @(username == null ? "User" : username.Value)
+        <a class="btn btn-outline-info" href="logout">Log out</a>
     </Authorized>
     <NotAuthorized>
         <a class="btn btn-outline-success" href="registration">Register</a>

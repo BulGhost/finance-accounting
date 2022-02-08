@@ -3,7 +3,12 @@
 <div class="main-image container">
     <h2 class="row">Home bookkeeping</h2>
     <h5 class="row col-6 mb-3 p-0">Accounting for personal and family finances, expenses and income.</h5>
-    <a class="btn-lg btn-success" href="registration">Registration</a>
+    <AuthorizeView>
+        <NotAuthorized>
+            <a class="btn-lg btn-success" href="registration">Registration</a>
+        </NotAuthorized>
+    </AuthorizeView>
+    
 </div>
 
 <style>
