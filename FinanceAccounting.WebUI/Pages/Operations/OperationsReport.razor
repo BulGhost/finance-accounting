@@ -1,0 +1,186 @@
+﻿@page "/operations"
+@using FinanceAccounting.WebUI.Entities.DTO
+@using FinanceAccounting.WebUI.Entities.Enums
+@attribute [Authorize]
+
+<h2 class="text-center mb-3">Operations</h2>
+
+<div class="row d-flex justify-content-between">
+    <div class="col-5 pl-0">
+        <a class="btn btn-primary" href="/operations/add-new" role="button">Add new operation</a>
+    </div>
+    <div class="col-7">
+        <div class="form-group row">
+            <label for="date-interval" class="col-6 col-form-label text-right">Date interval:</label>
+            <select id="date-interval" class=" col-6 form-control" @bind="_reportPeriod">
+                <option @onselect="() => _reportPeriod = null" selected>Select...</option>
+                @foreach (ReportPeriod period in Enum.GetValues<ReportPeriod>())
+                {
+                    <option value="@period">@period</option>
+                }
+            </select>
+        </div>
+
+        @switch (_reportPeriod)
+        {
+            case ReportPeriod.Day:
+                <EditForm Model="_dailyInterval" OnValidSubmit="GenerateReport_Click">
+                    <DataAnnotationsValidator />
+                    <div class="row justify-content-end mb-3">
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="date" class="col col-form-label text-right">Date:</label>
+                                <InputDate id="date" class="col form-control" @bind-Value="_dailyInterval.StartDate" DisplayName="Date" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _dailyInterval.StartDate)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </div>
+                </EditForm>
+                break;
+            case ReportPeriod.Month:
+                <EditForm Model="_monthlyInterval" OnValidSubmit="GenerateReport_Click">
+                    <DataAnnotationsValidator />
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="year" class="col col-form-label text-right">Year:</label>
+                                <InputNumber id="year" class="col form-control" @bind-Value="_monthlyInterval.Year" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _monthlyInterval.Year)" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="month" class="col col-form-label text-right">Month:</label>
+                                <InputSelect id="month" class="col form-control" @bind-Value="_monthlyInterval.Month">
+                                    @foreach (Month month in Enum.GetValues<Month>())
+                                    {
+                                        <option value="@month">@month</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _monthlyInterval.Month)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </div>
+                </EditForm>
+                break;
+            case ReportPeriod.Arbitrary:
+                <EditForm Model="_arbitraryInterval" OnValidSubmit="GenerateReport_Click">
+                    <DataAnnotationsValidator />
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="start-date" class="col col-form-label text-right">From:</label>
+                                <InputDate id="start-date" class="col form-control" @bind-Value="_arbitraryInterval.StartDate" DisplayName="Startup date" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _arbitraryInterval.StartDate)" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="final-date" class="col col-form-label text-right">Till:</label>
+                                <InputDate id="final-date" class="col form-control" @bind-Value="_arbitraryInterval.FinalDate" DisplayName="Final date" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _arbitraryInterval.FinalDate)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </div>
+                </EditForm>
+                break;
+        }
+    </div>
+</div>
+
+@if (ShowError)
+{
+    <div class="alert alert-danger mt-2" role="alert">
+        <p>@ErrorMessage</p>
+    </div>
+}
+
+@if (_reportLoadingState == ReportLoadingState.Loaded)
+{
+    @if (!Report.Operations.Any())
+    {
+        <h3 class="text-center">No operations found</h3>
+    }
+    else
+    {
+        <div>
+            <div class="row mb-1">
+                <button class="btn btn-info mr-3" type="button" @onclick="EditOperation_Click">Edit</button>
+                <button class="btn btn-danger" type="button" @onclick="() => DeleteConfirmation.Show()">Delete</button>
+            </div>
+            <div class="row">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" class="text-right">Sum</th>
+                        <th scope="col">Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @{ _counter = 0; }
+                    @foreach (OperationDto operation in Report.Operations.Where(operation => operation.Type == _displayedOperationType))
+                    {
+                        if (_selectedOperationId == 0) _selectedOperationId = operation.Id;
+                        <tr @onclick="() => _selectedOperationId = operation.Id" class="@(_selectedOperationId == operation.Id ? "bg-primary text-white" : "")">
+                            <th scope="row" class="align-middle">@(++_counter)</th>
+                            <td class="align-middle">@operation.Date.ToShortDateString()</td>
+                            <td class="align-middle">@operation.CategoryName</td>
+                            <td class="align-middle text-right">@operation.Sum.ToString("N2")</td>
+                            <td class="align-middle">@operation.Details</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-outline-primary @(_displayedOperationType == OperationType.Income ? "active" : "")">
+                        <input type="radio" name="options" id="option1" autocomplete="off" @onchange="() => { _displayedOperationType = OperationType.Income; _selectedOperationId = 0; }"> Income
+                    </label>
+                    <label class="btn btn-outline-primary @(_displayedOperationType == OperationType.Expense ? "active" : "")">
+                        <input type="radio" name="options" id="option2" autocomplete="off" @onchange="() => { _displayedOperationType = OperationType.Expense; _selectedOperationId = 0; }"> Expense
+                    </label>
+                </div>
+            </div>
+            <div class="row alert alert-primary mt-3 pt-3">
+                <h5 class="col">Income: @Report.TotalIncome.ToString("N2")</h5>
+                <h5 class="col">Expenses: @Report.TotalExpense.ToString("N2")</h5>
+                <h5 class="col">Total: @((Report.TotalIncome - Report.TotalExpense).ToString("N2"))</h5>
+            </div>
+        </div>
+    }
+}
+else if (_reportLoadingState == ReportLoadingState.Loading)
+{
+    <div class="spinner"></div>
+}
+else if (_reportLoadingState == ReportLoadingState.LoadFailed)
+{
+    <h2>Sorry, we could not load operations due to an error.</h2>
+}
+
+<Confirmation ConfirmationChanged="ConfirmDeleteOperation_Click"
+              ConfirmationMessage=@("Are you sure you want to delete the operation")
+              @ref="DeleteConfirmation"></Confirmation>

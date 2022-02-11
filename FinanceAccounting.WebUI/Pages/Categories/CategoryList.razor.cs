@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinanceAccounting.WebUI.Entities;
 using FinanceAccounting.WebUI.Entities.DTO;
+using FinanceAccounting.WebUI.Entities.Enums;
 using FinanceAccounting.WebUI.Exceptions;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using FinanceAccounting.WebUI.Shared;
@@ -16,9 +16,9 @@ namespace FinanceAccounting.WebUI.Pages.Categories
         private bool _loadFailed;
         private int _counter;
         private CategoryDto _categoryToDelete = new();
+        private OperationType _displayedOperationType;
 
-        public OperationType OperationType { get; set; }
-        public List<CategoryDto> Categories { get; set; }
+        public List<CategoryDto> UserCategories { get; set; }
         protected Confirmation DeleteConfirmation { get; set; }
 
         [Inject]
@@ -30,12 +30,15 @@ namespace FinanceAccounting.WebUI.Pages.Categories
         [Inject]
         private ILogger<CategoryList> Logger { get; set; }
 
+        public bool ShowError { get; set; }
+        public string ErrorMessage { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             try
             {
                 _loadFailed = false;
-                Categories = await CategoriesClient.GetAllCategories();
+                UserCategories = await CategoriesClient.GetAllCategories();
             }
             catch (CustomAuthenticationException)
             {
@@ -59,7 +62,7 @@ namespace FinanceAccounting.WebUI.Pages.Categories
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed on delete category click");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
 
@@ -67,17 +70,24 @@ namespace FinanceAccounting.WebUI.Pages.Categories
         {
             try
             {
-                if (deleteConfirmed)
+                if (!deleteConfirmed) return;
+
+                CommandResponseDto response = await CategoriesClient.DeleteCategory(_categoryToDelete.Id);
+                if (response.IsSucceeded)
                 {
-                    await CategoriesClient.DeleteCategory(_categoryToDelete.Id);
-                    int indexOfCategoryToDelete = Categories.FindIndex(c => c.Id == _categoryToDelete.Id);
-                    Categories.RemoveAt(indexOfCategoryToDelete);
+                    int indexOfCategoryToDelete = UserCategories.FindIndex(c => c.Id == _categoryToDelete.Id);
+                    UserCategories.RemoveAt(indexOfCategoryToDelete);
+                }
+                else
+                {
+                    ErrorMessage = response.ErrorMessage;
+                    ShowError = true;
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error on trying to delete a category");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
     }

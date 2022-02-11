@@ -61,6 +61,12 @@ a, .btn-link {
     position: absolute;
 }
 
+input.add-ctg-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    top: -0.2rem;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg)

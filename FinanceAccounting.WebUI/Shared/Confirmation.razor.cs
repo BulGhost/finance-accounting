@@ -37,7 +37,7 @@ namespace FinanceAccounting.WebUI.Shared
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed on delete confirmation");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
     }

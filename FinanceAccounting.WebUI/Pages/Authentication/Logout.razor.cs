@@ -27,7 +27,7 @@ namespace FinanceAccounting.WebUI.Pages.Authentication
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error on logout request submit");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
     }

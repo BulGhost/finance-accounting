@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -49,7 +49,7 @@ namespace FinanceAccounting.WebUI.Pages.Categories
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed on new category addition");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
     }

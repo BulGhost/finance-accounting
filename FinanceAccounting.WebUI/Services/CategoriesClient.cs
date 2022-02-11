@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using System.Text;
 using System.Text.Json;
-using FinanceAccounting.WebUI.Entities;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Entities.Enums;
+using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
 
 namespace FinanceAccounting.WebUI.Services
@@ -45,10 +45,10 @@ namespace FinanceAccounting.WebUI.Services
         public async Task<CategoryDto> GetCategoryById(int categoryId)
         {
             HttpClient httpClient = await _configuredHttpClient.Value;
-            HttpResponseMessage getCategoriesResult = await httpClient.GetAsync($"find-by-id/{categoryId}");
-            string jsonContent = await getCategoriesResult.Content.ReadAsStringAsync();
+            HttpResponseMessage getCategoryResult = await httpClient.GetAsync($"find-by-id/{categoryId}");
+            string jsonContent = await getCategoryResult.Content.ReadAsStringAsync();
 
-            if (getCategoriesResult.IsSuccessStatusCode)
+            if (getCategoryResult.IsSuccessStatusCode)
             {
                 return JsonSerializer.Deserialize<CategoryDto>(jsonContent, _options);
             }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinanceAccounting.WebUI.Entities.Models
+namespace FinanceAccounting.WebUI.Entities.Models.Requests
 {
     public class UpdateCategoryRequest
     {

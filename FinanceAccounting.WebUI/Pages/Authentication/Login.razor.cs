@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -43,7 +43,7 @@ namespace FinanceAccounting.WebUI.Pages.Authentication
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error on login request submit");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
     }

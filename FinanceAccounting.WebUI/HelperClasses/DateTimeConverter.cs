@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FinanceAccounting.WebApi.ViewModels.HelperClasses
+namespace FinanceAccounting.WebUI.HelperClasses
 {
     public class DateTimeConverter : JsonConverter<DateTime>
     {

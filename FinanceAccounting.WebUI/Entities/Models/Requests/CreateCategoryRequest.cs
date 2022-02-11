@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FinanceAccounting.WebUI.Entities.Enums;
 
-namespace FinanceAccounting.WebUI.Entities.Models
+namespace FinanceAccounting.WebUI.Entities.Models.Requests
 {
     public class CreateCategoryRequest
     {

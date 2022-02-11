@@ -1,4 +1,6 @@
-﻿namespace FinanceAccounting.WebUI.Entities.DTO
+﻿using FinanceAccounting.WebUI.Entities.Enums;
+
+namespace FinanceAccounting.WebUI.Entities.DTO
 {
     public class CategoryDto
     {

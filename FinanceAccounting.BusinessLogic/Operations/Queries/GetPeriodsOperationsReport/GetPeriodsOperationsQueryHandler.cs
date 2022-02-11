@@ -21,7 +21,7 @@ namespace FinanceAccounting.BusinessLogic.Operations.Queries.GetPeriodsOperation
 
         public async Task<IEnumerable<OperationDto>> Handle(GetPeriodsOperationsQuery request, CancellationToken cancellationToken)
         {
-            var operations = await _repo.GetUserOperationsOnDateRangeAsync(request.UserId, request.StartDate, request.FinalDate);
+            var operations = await _repo.GetUserOperationsOnDateRangeAsync(request.UserId, request.StartDate, request.FinalDate, cancellationToken);
 
             return _mapper.Map<IEnumerable<OperationDto>>(operations);
         }

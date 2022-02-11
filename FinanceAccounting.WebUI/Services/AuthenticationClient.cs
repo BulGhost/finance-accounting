@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Services.AuthProvider;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;

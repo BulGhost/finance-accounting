@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Entities.Models.Requests;
 
 namespace FinanceAccounting.WebUI.Services.Interfaces
 {

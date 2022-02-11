@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Models;
+using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
 using FinanceAccounting.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -56,20 +56,20 @@ namespace FinanceAccounting.WebUI.Pages.Categories
             {
                 ShowError = false;
                 CommandResponseDto response = await CategoriesClient.UpdateCategory(_category);
-                if (!response.IsSucceeded)
+                if (response.IsSucceeded)
                 {
-                    ErrorMessage = response.ErrorMessage;
-                    ShowError = true;
+                    NavigationManager.NavigateTo("/categories");
                 }
                 else
                 {
-                    NavigationManager.NavigateTo("/categories");
+                    ErrorMessage = response.ErrorMessage;
+                    ShowError = true;
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed on category updating");
-                NavigationManager.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error", true);
             }
         }
     }

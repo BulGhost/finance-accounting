@@ -1,4 +1,4 @@
-﻿namespace FinanceAccounting.WebUI.Entities
+﻿namespace FinanceAccounting.WebUI.Entities.Enums
 {
     public enum OperationType
     {

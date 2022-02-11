@@ -1,0 +1,78 @@
+﻿@page "/operations/add-new"
+@using FinanceAccounting.WebUI.Entities.DTO
+@using FinanceAccounting.WebUI.Entities.Enums
+@attribute [Authorize]
+
+<h3>Add Operation</h3>
+
+@if (ShowError)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@ErrorMessage</p>
+    </div>
+}
+
+<EditForm Model="_operation" OnValidSubmit="AddNewOperation" class="card card-body bg-light mt-3">
+    <DataAnnotationsValidator />
+    
+    <div class="form-group row">
+        <label for="operation-type" class="col-md-2 col-form-label">Operation type:</label>
+        <div class="col-md-10">
+            <InputSelect id="operation-type" class="form-control" @bind-Value="_operationType">
+                @foreach (OperationType type in Enum.GetValues<OperationType>())
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="date" class="col-md-2 col-form-label">Date:</label>
+        <div class="col-md-10">
+            <InputDate id="date" class="form-control" @bind-Value="_operation.Date"/>
+            <ValidationMessage For="@(() => _operation.Date)" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="category" class="col-md-2 col-form-label">Category:</label>
+        <div class="col-md-10">
+            <InputSelect id="category" class="form-control" @bind-Value="_operation.CategoryId">
+                <option value="0" selected>Select...</option>
+                @foreach (CategoryDto category in UserCategories
+                    .Where(category => category.Type == _operationType)
+                    .OrderBy(c => c.CategoryName))
+                {
+                    <option value="@category.Id">@category.CategoryName</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => _operation.CategoryId)" />
+        </div>
+    </div>
+    
+    <div class="form-group row">
+        <label for="sum" class="col-md-2 col-form-label">Sum:</label>
+        <div class="col-md-10">
+            <InputNumber id="sum" class="form-control" @bind-Value="_operation.Sum"/>
+            <ValidationMessage For="@(() => _operation.Sum)" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="details" class="col-md-2 col-form-label">Details:</label>
+        <div class="col-md-10">
+            <InputText id="details" class="form-control" @bind-Value="_operation.Details"/>
+            <ValidationMessage For="@(() => _operation.Details)" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-block" @onclick="() => _addMore = true">More</button>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success btn-block" @onclick="() => _addMore = false"> OK </button>
+        </div>
+    </div>
+</EditForm>
