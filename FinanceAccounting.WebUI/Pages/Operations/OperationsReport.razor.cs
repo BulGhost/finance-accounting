@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Enums;
+using FinanceAccounting.WebUI.Entities.Models;
 using FinanceAccounting.WebUI.Entities.Models.ReportInterval;
 using FinanceAccounting.WebUI.Exceptions;
 using FinanceAccounting.WebUI.Services.Interfaces;
@@ -14,18 +16,23 @@ namespace FinanceAccounting.WebUI.Pages.Operations
 {
     public partial class OperationsReport
     {
-        private ReportLoadingState _reportLoadingState = ReportLoadingState.NotLoaded;
+        private const int _operationsPerPage = 10;
+        private const int _paginationSpread = 2;
         private int _counter;
         private int _selectedOperationId;
         private ReportPeriod? _reportPeriod;
+        private ReportLoadingState _reportLoadingState = ReportLoadingState.NotLoaded;
+        private OperationType _displayedOperationType = OperationType.Expense;
+        private IEnumerable<OperationDto> _displayedOperations;
 
         private DayReportInterval _dailyInterval = new();
         private MonthReportInterval _monthlyInterval = new();
         private ArbitraryReportInterval _arbitraryInterval = new();
 
-        private OperationType _displayedOperationType = OperationType.Expense;
-
+        public bool ShowError { get; set; }
+        public string ErrorMessage { get; set; }
         public OperationsReportDto Report { get; set; }
+        public PaginationData PaginationData { get; set; } = new() {PageSize = _operationsPerPage};
         protected Confirmation DeleteConfirmation { get; set; }
 
         [Inject]
@@ -37,9 +44,6 @@ namespace FinanceAccounting.WebUI.Pages.Operations
         [Inject]
         private ILogger<OperationsReport> Logger { get; set; }
 
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
-
         protected async Task GenerateReport_Click()
         {
             try
@@ -47,6 +51,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                 _reportLoadingState = ReportLoadingState.Loading;
                 IReportInterval reportInterval = GetReportInterval();
                 Report = await OperationsClient.GetOperationsReport(reportInterval);
+                SetDisplayedOperations(1);
                 _reportLoadingState = ReportLoadingState.Loaded;
             }
             catch (CustomAuthenticationException)
@@ -59,6 +64,20 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                 _reportLoadingState = ReportLoadingState.LoadFailed;
                 Logger.LogError(ex, "Failed to get operations report");
             }
+        }
+
+        protected void DisplayedOperationsTypeChanged_Click()
+        {
+            _displayedOperationType = _displayedOperationType == OperationType.Expense
+                ? OperationType.Income
+                : OperationType.Expense;
+
+            SetDisplayedOperations(1);
+        }
+
+        protected void EditOperation_Click()
+        {
+            NavigationManager.NavigateTo($"/operations/edit/{_selectedOperationId}");
         }
 
         protected async Task ConfirmDeleteOperation_Click(bool deleteConfirmed)
@@ -96,6 +115,16 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             };
         }
 
+        private void SetDisplayedOperations(int pageNumber)
+        {
+            PaginationData.TotalCount = Report.Operations.Count(op => op.Type == _displayedOperationType);
+            PaginationData.CurrentPage = pageNumber;
+            _selectedOperationId = 0;
+            _displayedOperations = Report.Operations.Where(op => op.Type == _displayedOperationType)
+                .Skip((pageNumber - 1) * PaginationData.PageSize)
+                .Take(PaginationData.PageSize);
+        }
+
         private void UpdateReportAfterRemoval()
         {
             OperationDto operationToDelete = Report.Operations.Single(o => o.Id == _selectedOperationId);
@@ -111,11 +140,6 @@ namespace FinanceAccounting.WebUI.Pages.Operations
 
             Report.Operations.Remove(operationToDelete);
             _selectedOperationId = 0;
-        }
-
-        private void EditOperation_Click()
-        {
-            NavigationManager.NavigateTo($"/operations/edit/{_selectedOperationId}");
         }
     }
 }

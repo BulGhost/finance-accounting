@@ -139,8 +139,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @{ _counter = 0; }
-                    @foreach (OperationDto operation in Report.Operations.Where(operation => operation.Type == _displayedOperationType))
+                    @{ _counter = 0 + PaginationData.PageSize * (PaginationData.CurrentPage - 1); }
+                    @foreach (OperationDto operation in _displayedOperations)
                     {
                         if (_selectedOperationId == 0) _selectedOperationId = operation.Id;
                         <tr @onclick="() => _selectedOperationId = operation.Id" class="@(_selectedOperationId == operation.Id ? "bg-primary text-white" : "")">
@@ -154,14 +154,19 @@
                     </tbody>
                 </table>
             </div>
-            <div class="row">
-                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-outline-primary @(_displayedOperationType == OperationType.Income ? "active" : "")">
-                        <input type="radio" name="options" id="option1" autocomplete="off" @onchange="() => { _displayedOperationType = OperationType.Income; _selectedOperationId = 0; }"> Income
-                    </label>
-                    <label class="btn btn-outline-primary @(_displayedOperationType == OperationType.Expense ? "active" : "")">
-                        <input type="radio" name="options" id="option2" autocomplete="off" @onchange="() => { _displayedOperationType = OperationType.Expense; _selectedOperationId = 0; }"> Expense
-                    </label>
+            <div class="row d-flex justify-content-between">
+                <div class="col">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-primary @(_displayedOperationType == OperationType.Income ? "active" : "")">
+                            <input type="radio" name="options" id="option1" autocomplete="off" @onchange="DisplayedOperationsTypeChanged_Click"> Income
+                        </label>
+                        <label class="btn btn-outline-primary @(_displayedOperationType == OperationType.Expense ? "active" : "")">
+                            <input type="radio" name="options" id="option2" autocomplete="off" @onchange="DisplayedOperationsTypeChanged_Click"> Expense
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <Pagination PaginationData="PaginationData" Spread="_paginationSpread" SelectedPage="SetDisplayedOperations"/>
                 </div>
             </div>
             <div class="row alert alert-primary mt-3 pt-3">
