@@ -69,10 +69,16 @@
 
     <div class="row">
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary btn-block" @onclick="() => _addMore = true">More</button>
+            <button type="submit" class="btn btn-primary btn-block" title="Add an operation and do not close the window" @onclick="() => _addMore = true">More</button>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-success btn-block" @onclick="() => _addMore = false"> OK </button>
+            <button type="submit" class="btn btn-success btn-block" title="Add an operation and close the window" @onclick="() => _addMore = false"> OK </button>
         </div>
     </div>
+    @if (NotificationDisplayed)
+    {
+        <div class="row alert alert-success mx-0 mt-3 mb-0" role="alert" style="width: 50%">
+            The operation has been successfully added.
+        </div>
+    }
 </EditForm>

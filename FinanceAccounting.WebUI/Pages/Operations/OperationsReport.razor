@@ -131,11 +131,20 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Category</th>
-                        <th scope="col" class="text-right">Sum</th>
-                        <th scope="col">Details</th>
+                        <th scope="col" style="width: 5%">#</th>
+                        <th scope="col" class="sort-th" style="width: 17.5%" @onclick="() => SortOperationsBy(nameof(OperationDto.Date))">
+                            Date
+                            <span class="oi @SetSortIcon(nameof(OperationDto.Date))"></span>
+                        </th>
+                        <th scope="col" class="sort-th" style="width: 25%" @onclick="() => SortOperationsBy(nameof(OperationDto.CategoryName))">
+                            Category
+                            <span class="oi @SetSortIcon(nameof(OperationDto.CategoryName))"></span>
+                        </th>
+                        <th scope="col" class="sort-th text-right" style="width: 17.5%" @onclick="() => SortOperationsBy(nameof(OperationDto.Sum))">
+                            Sum
+                            <span class="oi @SetSortIcon(nameof(OperationDto.Sum))"></span>
+                        </th>
+                        <th scope="col" class="text-center" style="width: 35%">Details</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -148,7 +157,7 @@
                             <td class="align-middle">@operation.Date.ToShortDateString()</td>
                             <td class="align-middle">@operation.CategoryName</td>
                             <td class="align-middle text-right">@operation.Sum.ToString("N2")</td>
-                            <td class="align-middle">@operation.Details</td>
+                            <td class="align-middle pl-4">@operation.Details</td>
                         </tr>
                     }
                     </tbody>

@@ -18,6 +18,8 @@ namespace FinanceAccounting.WebUI.Pages.Operations
     {
         private const int _operationsPerPage = 10;
         private const int _paginationSpread = 2;
+        private bool _isSortedAscending = false;
+        private string _activeSortColumn = nameof(OperationDto.Date);
         private int _counter;
         private int _selectedOperationId;
         private ReportPeriod? _reportPeriod;
@@ -117,10 +119,15 @@ namespace FinanceAccounting.WebUI.Pages.Operations
 
         private void SetDisplayedOperations(int pageNumber)
         {
-            PaginationData.TotalCount = Report.Operations.Count(op => op.Type == _displayedOperationType);
-            PaginationData.CurrentPage = pageNumber;
             _selectedOperationId = 0;
-            _displayedOperations = Report.Operations.Where(op => op.Type == _displayedOperationType)
+            PaginationData.CurrentPage = pageNumber;
+            var operationsWithSelectedType = Report.Operations.Where(op => op.Type == _displayedOperationType).ToList();
+            PaginationData.TotalCount = operationsWithSelectedType.Count;
+            var orderedOperations = _isSortedAscending
+                ? operationsWithSelectedType.OrderBy(op => op.GetType().GetProperty(_activeSortColumn)!.GetValue(op))
+                : operationsWithSelectedType.OrderByDescending(op => op.GetType().GetProperty(_activeSortColumn)!.GetValue(op));
+
+            _displayedOperations = orderedOperations
                 .Skip((pageNumber - 1) * PaginationData.PageSize)
                 .Take(PaginationData.PageSize);
         }
@@ -140,6 +147,32 @@ namespace FinanceAccounting.WebUI.Pages.Operations
 
             Report.Operations.Remove(operationToDelete);
             _selectedOperationId = 0;
+            SetDisplayedOperations(PaginationData.CurrentPage);
+        }
+
+        private void SortOperationsBy(string columnName)
+        {
+            if (columnName == _activeSortColumn)
+            {
+                _isSortedAscending = !_isSortedAscending;
+            }
+            else
+            {
+                _activeSortColumn = columnName;
+                _isSortedAscending = columnName == nameof(OperationDto.CategoryName);
+            }
+
+            SetDisplayedOperations(1);
+        }
+
+        private string SetSortIcon(string columnName)
+        {
+            if (_activeSortColumn != columnName)
+            {
+                return string.Empty;
+            }
+
+            return _isSortedAscending ? "oi-caret-top" : "oi-caret-bottom";
         }
     }
 }

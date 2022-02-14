@@ -13,6 +13,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
 {
     public partial class AddOperation
     {
+        private const int _notificationDurationInMilliseconds = 3000;
         private readonly AddOperationRequest _operation = new() {Date = DateTime.Today};
         private OperationType _operationType = OperationType.Expense;
         private bool _addMore;
@@ -32,6 +33,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
         public List<CategoryDto> UserCategories { get; set; } = new();
         public bool ShowError { get; set; }
         public string ErrorMessage { get; set; }
+        public bool NotificationDisplayed { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -77,6 +79,8 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                         NavigationManager.NavigateTo("/operations");
                     }
                 }
+
+                ShowNotification(_notificationDurationInMilliseconds);
             }
             catch (CustomAuthenticationException)
             {
@@ -88,6 +92,14 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                 Logger.LogError(ex, "Failed on new operation addition");
                 NavigationManager.NavigateTo("/error", true);
             }
+        }
+
+        private async void ShowNotification(int notificationDurationInMilliseconds)
+        {
+            NotificationDisplayed = true;
+            await Task.Delay(notificationDurationInMilliseconds);
+            NotificationDisplayed = false;
+            StateHasChanged();
         }
     }
 }

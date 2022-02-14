@@ -67,6 +67,10 @@ input.add-ctg-checkbox {
     top: -0.2rem;
 }
 
+.sort-th {
+    cursor: pointer;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg)
