@@ -1,8 +1,9 @@
 ﻿@page "/registration"
+@inherits FinanceAccounting.WebUI.Pages.Authentication.BaseClasses.RegistrationBase
 
 <h3>Registration</h3>
 
-@if (ShowRegistrationError)
+@if (ShowError)
 {
     <div class="alert alert-danger" role="alert">
         <p>@ErrorMessage</p>

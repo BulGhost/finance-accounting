@@ -3,29 +3,16 @@ using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
-using FinanceAccounting.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Components;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Categories
+namespace FinanceAccounting.WebUI.Pages.Categories.BaseClasses
 {
-    public partial class CreateCategory
+    public class CreateCategoryBase : FinanceAccountingBaseComponent
     {
-        private readonly CreateCategoryRequest _category = new();
+        protected readonly CreateCategoryRequest _category = new();
 
-        [Inject]
-        private ICategoriesClient CategoriesClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<CreateCategory> Logger { get; set; }
-
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
-
-        public async Task AddNewCategory()
+        protected async Task AddNewCategory()
         {
             try
             {

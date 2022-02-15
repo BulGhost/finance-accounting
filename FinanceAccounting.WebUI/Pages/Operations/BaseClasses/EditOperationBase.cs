@@ -6,37 +6,22 @@ using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Enums;
 using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
-using FinanceAccounting.WebUI.Services.Interfaces;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Operations
+namespace FinanceAccounting.WebUI.Pages.Operations.BaseClasses
 {
-    public partial class EditOperation
+    public class EditOperationBase : FinanceAccountingBaseComponent
     {
-        private bool _loadFailed;
-        private OperationType _operationType;
-        private UpdateOperationRequest _operation;
+        protected bool _loadFailed;
+        protected OperationType _operationType;
+        protected UpdateOperationRequest _operation;
 
         [Parameter]
         public string Id { get; set; }
 
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
-
-        [Inject]
-        private ICategoriesClient CategoriesClient { get; set; }
-
-        [Inject]
-        private IOperationsClient OperationsClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<EditOperation> Logger { get; set; }
-
-        public List<CategoryDto> UserCategories { get; set; } = new();
+        protected List<CategoryDto> UserCategories { get; set; } = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -46,7 +31,11 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                 OperationDto operationToUpdate = await OperationsClient.GetOperationById(int.Parse(Id));
                 UserCategories = await CategoriesClient.GetAllCategories();
                 int operationCategoryId = UserCategories.Single(c => c.CategoryName == operationToUpdate.CategoryName).Id;
-                _operation = new UpdateOperationRequest { Id = operationToUpdate.Id, Date = operationToUpdate.Date, CategoryId = operationCategoryId, Sum = decimal.Round(operationToUpdate.Sum, 2), Details = operationToUpdate.Details };
+                _operation = new UpdateOperationRequest
+                {
+                    Id = operationToUpdate.Id, Date = operationToUpdate.Date, CategoryId = operationCategoryId,
+                    Sum = decimal.Round(operationToUpdate.Sum, 2), Details = operationToUpdate.Details
+                };
                 _operationType = operationToUpdate.Type;
             }
             catch (CustomAuthenticationException)
@@ -61,7 +50,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             }
         }
 
-        public async Task UpdateOperation()
+        protected async Task UpdateOperation()
         {
             try
             {
@@ -84,7 +73,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             }
         }
 
-        private void OnOperationTypeChanged(ChangeEventArgs obj)
+        protected void OnOperationTypeChanged(ChangeEventArgs obj)
         {
             _operationType = Enum.Parse<OperationType>((string)obj.Value!);
             _operation.CategoryId = 0;

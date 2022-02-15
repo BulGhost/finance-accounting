@@ -2,38 +2,25 @@
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models.Requests;
-using FinanceAccounting.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Components;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Authentication
+namespace FinanceAccounting.WebUI.Pages.Authentication.BaseClasses
 {
-    public partial class Login
+    public class LoginBase : FinanceAccountingBaseComponent
     {
-        private AuthenticationRequest _authenticationRequest = new();
+        protected AuthenticationRequest _authenticationRequest = new();
 
-        [Inject]
-        private IAuthenticationClient AuthenticationClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<Login> Logger { get; set; }
-
-        public bool ShowAuthError { get; set; }
-        public string ErrorMessage { get; set; }
-
-        public async Task ExecuteLogin()
+        protected async Task ExecuteLogin()
         {
             try
             {
-                ShowAuthError = false;
+                ShowError = false;
                 AuthResponseDto result = await AuthenticationClient.Login(_authenticationRequest);
                 if (!result.IsSucceeded)
                 {
                     ErrorMessage = result.ErrorMessage;
-                    ShowAuthError = true;
+                    ShowError = true;
                 }
                 else
                 {

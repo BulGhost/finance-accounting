@@ -1,8 +1,9 @@
 ﻿@page "/login"
+@inherits FinanceAccounting.WebUI.Pages.Authentication.BaseClasses.LoginBase
 
 <h3>Login</h3>
 
-@if (ShowAuthError)
+@if (ShowError)
 {
     <div class="alert alert-danger" role="alert">
         <p>@ErrorMessage</p>

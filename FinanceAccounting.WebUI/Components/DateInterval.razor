@@ -1,0 +1,96 @@
+﻿@using FinanceAccounting.WebUI.Entities.Enums
+
+<div class="form-group row">
+            <label for="date-interval" class="col-6 col-form-label text-right">Date interval:</label>
+            <select id="date-interval" class=" col-6 form-control" @bind="_reportPeriod">
+                <option @onselect="() => _reportPeriod = null" selected>Select...</option>
+                @foreach (ReportPeriod period in Enum.GetValues<ReportPeriod>())
+                {
+                    <option value="@period">@period</option>
+                }
+            </select>
+        </div>
+
+        @switch (_reportPeriod)
+        {
+            case ReportPeriod.Day:
+                <EditForm Model="_dailyInterval" OnValidSubmit="OnGenerateCommand">
+                    <DataAnnotationsValidator />
+                    <div class="row justify-content-end mb-3">
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="date" class="col col-form-label text-right">Date:</label>
+                                <InputDate id="date" class="col form-control" @bind-Value="_dailyInterval.StartDate" DisplayName="Date" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _dailyInterval.StartDate)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </div>
+                </EditForm>
+                break;
+            case ReportPeriod.Month:
+                <EditForm Model="_monthlyInterval" OnValidSubmit="OnGenerateCommand">
+                    <DataAnnotationsValidator />
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="year" class="col col-form-label text-right">Year:</label>
+                                <InputNumber id="year" class="col form-control" @bind-Value="_monthlyInterval.Year" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _monthlyInterval.Year)" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="month" class="col col-form-label text-right">Month:</label>
+                                <InputSelect id="month" class="col form-control" @bind-Value="_monthlyInterval.Month">
+                                    @foreach (Month month in Enum.GetValues<Month>())
+                                    {
+                                        <option value="@month">@month</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _monthlyInterval.Month)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </div>
+                </EditForm>
+                break;
+            case ReportPeriod.Arbitrary:
+                <EditForm Model="_arbitraryInterval" OnValidSubmit="OnGenerateCommand">
+                    <DataAnnotationsValidator />
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="form-group row mb-0 mr-1">
+                                <label for="start-date" class="col col-form-label text-right">From:</label>
+                                <InputDate id="start-date" class="col form-control" @bind-Value="_arbitraryInterval.StartDate" DisplayName="Startup date" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _arbitraryInterval.StartDate)" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row mb-0">
+                                <label for="final-date" class="col col-form-label text-right">Till:</label>
+                                <InputDate id="final-date" class="col form-control" @bind-Value="_arbitraryInterval.FinalDate" DisplayName="Final date" />
+                            </div>
+                            <div class="row justify-content-end">
+                                <ValidationMessage For="@(() => _arbitraryInterval.FinalDate)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </div>
+                </EditForm>
+                break;
+        }
