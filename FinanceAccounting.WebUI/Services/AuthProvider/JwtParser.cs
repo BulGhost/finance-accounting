@@ -8,7 +8,7 @@ namespace FinanceAccounting.WebUI.Services.AuthProvider
 {
     public static class JwtParser
     {
-        public static bool TryParseClaimsFromJwt(string jwt, out List<Claim> claims)
+        public static bool TryParseJwt(string jwt, out List<Claim> claims)
         {
             claims = null;
             if (string.IsNullOrWhiteSpace(jwt) || !IsJwt(jwt, out byte[] payload))

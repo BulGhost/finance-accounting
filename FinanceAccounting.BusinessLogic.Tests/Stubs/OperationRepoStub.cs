@@ -26,10 +26,6 @@ namespace FinanceAccounting.BusinessLogic.Tests.Stubs
 
         private readonly CategoryRepoStub _categoryRepo = new();
 
-        public void Dispose()
-        {
-        }
-
         public Task<int> AddAsync(Operation entity, bool persist = true, CancellationToken cancellationToken = default)
         {
             _operationList.Add(entity);

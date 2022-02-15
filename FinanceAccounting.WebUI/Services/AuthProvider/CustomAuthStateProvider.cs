@@ -20,7 +20,7 @@ namespace FinanceAccounting.WebUI.Services.AuthProvider
         {
             var token = await _localStorage.GetItemAsync<string>("accessToken");
 
-            return JwtParser.TryParseClaimsFromJwt(token, out var userClaims)
+            return JwtParser.TryParseJwt(token, out var userClaims)
                 ? new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(userClaims, "jwtAuthType")))
                 : _anonymous;
         }

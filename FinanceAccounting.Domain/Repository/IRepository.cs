@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FinanceAccounting.Domain.Repository
 {
-    public interface IRepository<T> : IDisposable where T : class
+    public interface IRepository<T> where T : class
     {
         Task<int> AddAsync(T entity, bool persist = true, CancellationToken cancellationToken = default);
         Task<int> AddRangeAsync(IEnumerable<T> entities, bool persist = true, CancellationToken cancellationToken = default);

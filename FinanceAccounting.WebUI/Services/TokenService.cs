@@ -24,7 +24,7 @@ namespace FinanceAccounting.WebUI.Services
         public async Task<string> GetActualAccessToken()
         {
             var token = await _localStorage.GetItemAsync<string>("accessToken");
-            if (!JwtParser.TryParseClaimsFromJwt(token, out var userClaims) ||
+            if (!JwtParser.TryParseJwt(token, out var userClaims) ||
                 !userClaims.Any(c => c.Type.Equals("exp")))
             {
                 throw new CustomAuthenticationException("User access token is invalid");

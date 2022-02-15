@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FinanceAccounting.DataAccess.DbContext;
@@ -11,8 +10,6 @@ namespace FinanceAccounting.DataAccess.Repositories.Base
 {
     public abstract class BaseRepository<T> : IRepository<T> where T : class, IEntity<int>, new()
     {
-        private bool _isDisposed;
-
         public BookkeepingDbContext Context { get; }
         public DbSet<T> Table { get; }
 
@@ -20,27 +17,6 @@ namespace FinanceAccounting.DataAccess.Repositories.Base
         {
             Context = context;
             Table = Context.Set<T>();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            _isDisposed = true;
-        }
-
-        ~BaseRepository()
-        {
-            Dispose(false);
         }
 
         public virtual async Task<int> AddAsync(T entity, bool persist = true, CancellationToken cancellationToken = default)

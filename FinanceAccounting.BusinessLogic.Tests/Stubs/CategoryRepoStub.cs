@@ -28,10 +28,6 @@ namespace FinanceAccounting.BusinessLogic.Tests.Stubs
             new Category {Id = 14, Type = OperationType.Expense, CategoryName = "Services", UserId = 2}
         };
 
-        public void Dispose()
-        {
-        }
-
         public Task<int> AddAsync(Category entity, bool persist = true, CancellationToken cancellationToken = default)
         {
             _categoryList.Add(entity);

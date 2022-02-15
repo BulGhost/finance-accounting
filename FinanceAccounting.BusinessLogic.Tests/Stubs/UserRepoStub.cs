@@ -26,10 +26,6 @@ namespace FinanceAccounting.BusinessLogic.Tests.Stubs
             _users[1].Operations = operationRepo.GetAllAsync().Result.Where(c => c.UserId == _users[1].Id).ToList();
         }
 
-        public void Dispose()
-        {
-        }
-
         public Task<int> AddAsync(User entity, bool persist = true, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();

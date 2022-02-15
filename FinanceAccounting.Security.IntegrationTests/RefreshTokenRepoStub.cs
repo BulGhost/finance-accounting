@@ -19,10 +19,6 @@ namespace FinanceAccounting.Security.IntegrationTests
         {
         }
 
-        public void Dispose()
-        {
-        }
-
         public Task<int> AddAsync(RefreshToken entity, bool persist = true, CancellationToken cancellationToken = default)
         {
             _refreshTokens.Add(entity);
