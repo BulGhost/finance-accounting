@@ -9,7 +9,7 @@ using FinanceAccounting.WebUI.Services.Interfaces;
 
 namespace FinanceAccounting.WebUI.Services
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         private const double _maxTimeInSecondsUntilTokenExpirationAtWitchTokenShouldBeRefreshed = 60;
         private readonly ILocalStorageService _localStorage;

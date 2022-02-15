@@ -3,31 +3,19 @@ using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
-using FinanceAccounting.WebUI.Services.Interfaces;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Categories
+namespace FinanceAccounting.WebUI.Pages.Categories.BaseClasses
 {
-    public partial class EditCategory
+    public class EditCategoryBase : FinanceAccountingBaseComponent
     {
-        private bool _loadFailed;
-        private UpdateCategoryRequest _category;
+        protected bool _loadFailed;
+        protected UpdateCategoryRequest _category;
 
         [Parameter]
         public string Id { get; set; }
-
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
-
-        [Inject]
-        private ICategoriesClient CategoriesClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<EditCategory> Logger { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -36,7 +24,7 @@ namespace FinanceAccounting.WebUI.Pages.Categories
                 _loadFailed = false;
                 CategoryDto categoryToUpdate = await CategoriesClient.GetCategoryById(int.Parse(Id));
 
-                _category = new UpdateCategoryRequest {Id = categoryToUpdate.Id, Name = categoryToUpdate.CategoryName};
+                _category = new UpdateCategoryRequest { Id = categoryToUpdate.Id, Name = categoryToUpdate.CategoryName };
             }
             catch (CustomAuthenticationException)
             {
@@ -50,7 +38,7 @@ namespace FinanceAccounting.WebUI.Pages.Categories
             }
         }
 
-        public async Task UpdateCategory()
+        protected async Task UpdateCategory()
         {
             try
             {

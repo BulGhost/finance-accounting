@@ -5,35 +5,20 @@ using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Enums;
 using FinanceAccounting.WebUI.Entities.Models.Requests;
 using FinanceAccounting.WebUI.Exceptions;
-using FinanceAccounting.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Components;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Operations
+namespace FinanceAccounting.WebUI.Pages.Operations.BaseClasses
 {
-    public partial class AddOperation
+    public class AddOperationBase : FinanceAccountingBaseComponent
     {
         private const int _notificationDurationInMilliseconds = 3000;
-        private readonly AddOperationRequest _operation = new() {Date = DateTime.Today};
-        private OperationType _operationType = OperationType.Expense;
-        private bool _addMore;
+        protected readonly AddOperationRequest _operation = new() { Date = DateTime.Today };
+        protected OperationType _operationType = OperationType.Expense;
+        protected bool _addMore;
 
-        [Inject]
-        private IOperationsClient OperationsClient { get; set; }
-
-        [Inject]
-        private ICategoriesClient CategoriesClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<AddOperation> Logger { get; set; }
-
-        public List<CategoryDto> UserCategories { get; set; } = new();
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
-        public bool NotificationDisplayed { get; set; }
+        protected List<CategoryDto> UserCategories { get; set; } = new();
+        protected bool NotificationDisplayed { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -55,7 +40,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             }
         }
 
-        public async Task AddNewOperation()
+        protected async Task AddNewOperation()
         {
             try
             {
@@ -80,7 +65,7 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                     }
                 }
 
-                ShowNotification(_notificationDurationInMilliseconds);
+                ShowNotification();
             }
             catch (CustomAuthenticationException)
             {
@@ -94,10 +79,10 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             }
         }
 
-        private async void ShowNotification(int notificationDurationInMilliseconds)
+        private async void ShowNotification()
         {
             NotificationDisplayed = true;
-            await Task.Delay(notificationDurationInMilliseconds);
+            await Task.Delay(_notificationDurationInMilliseconds);
             NotificationDisplayed = false;
             StateHasChanged();
         }

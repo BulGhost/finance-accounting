@@ -1,8 +1,10 @@
 ﻿@page "/operations/edit/{id}"
+@inherits FinanceAccounting.WebUI.Pages.Operations.BaseClasses.EditOperationBase
+@attribute [Authorize]
 @using Microsoft.AspNetCore.Components
 @using FinanceAccounting.WebUI.Entities.Enums
 @using FinanceAccounting.WebUI.Entities.DTO
-@attribute [Authorize]
+
 
 <h3>Edit Operation</h3>
 

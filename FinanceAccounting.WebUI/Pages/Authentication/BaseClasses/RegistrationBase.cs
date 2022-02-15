@@ -2,38 +2,25 @@
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
 using FinanceAccounting.WebUI.Entities.Models.Requests;
-using FinanceAccounting.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Components;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Authentication
+namespace FinanceAccounting.WebUI.Pages.Authentication.BaseClasses
 {
-    public partial class Registration
+    public class RegistrationBase : FinanceAccountingBaseComponent
     {
-        private readonly RegistrationRequest _userForRegistration = new();
+        protected readonly RegistrationRequest _userForRegistration = new();
 
-        [Inject]
-        private IAuthenticationClient AuthenticationClient { get; set; }
-
-        [Inject]
-        private ILogger<Registration> Logger { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        public bool ShowRegistrationError { get; set; }
-        public string ErrorMessage { get; set; }
-
-        public async Task Register()
+        protected async Task Register()
         {
             try
             {
-                ShowRegistrationError = false;
+                ShowError = false;
                 RegistrationResponseDto response = await AuthenticationClient.RegisterUser(_userForRegistration);
                 if (!response.IsSucceeded)
                 {
                     ErrorMessage = response.ErrorMessage;
-                    ShowRegistrationError = true;
+                    ShowError = true;
                 }
                 else
                 {

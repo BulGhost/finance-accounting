@@ -1,0 +1,10 @@
+﻿@using FinanceAccounting.WebUI.Entities.Enums
+
+<div class="btn-group btn-group-toggle mb-1" data-toggle="buttons">
+    <label class="btn btn-outline-primary @(OperationType == OperationType.Income ? "active" : "")">
+        <input type="radio" name="options" id="option1" autocomplete="off" @onchange="OnOperationTypeChanged"> Income
+    </label>
+    <label class="btn btn-outline-primary @(OperationType == OperationType.Expense ? "active" : "")">
+        <input type="radio" name="options" id="option2" autocomplete="off" @onchange="OnOperationTypeChanged"> Expense
+    </label>
+</div>

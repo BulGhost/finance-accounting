@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Blazored.LocalStorage;
-using FinanceAccounting.WebUI.Services;
 using FinanceAccounting.WebUI.Services.AuthProvider;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;
@@ -28,7 +27,6 @@ namespace FinanceAccounting.WebUI
             services.AddLocalization();
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             services.AddCustomHttpClients(Configuration);
-            services.AddScoped<TokenService>();
             services.AddLocalizationOptions(Configuration);
         }
 

@@ -2,36 +2,21 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinanceAccounting.WebUI.Entities.DTO;
-using FinanceAccounting.WebUI.Entities.Enums;
 using FinanceAccounting.WebUI.Exceptions;
-using FinanceAccounting.WebUI.Services.Interfaces;
 using FinanceAccounting.WebUI.Shared;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Categories
+namespace FinanceAccounting.WebUI.Pages.Categories.BaseClasses
 {
-    public partial class CategoryList
+    public class CategoryListBase : FinanceAccountingBaseComponent
     {
-        private bool _loadFailed;
-        private int _counter;
-        private CategoryDto _categoryToDelete = new();
-        private OperationType _displayedOperationType;
+        protected bool _loadFailed;
+        protected int _counter;
+        protected CategoryDto _categoryToDelete = new();
 
-        public List<CategoryDto> UserCategories { get; set; }
+        protected OperationTypeToggle Toggle { get; set; }
+        protected List<CategoryDto> UserCategories { get; set; }
         protected Confirmation DeleteConfirmation { get; set; }
-
-        [Inject]
-        private ICategoriesClient CategoriesClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<CategoryList> Logger { get; set; }
-
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

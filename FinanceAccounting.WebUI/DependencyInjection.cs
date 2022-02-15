@@ -23,6 +23,7 @@ namespace FinanceAccounting.WebUI
                 .AddCustomHttpErrorPolicy(pollyConfig);
             services.AddHttpClient<IOperationsClient, OperationsClient>()
                 .AddCustomHttpErrorPolicy(pollyConfig);
+            services.AddScoped<ITokenService, TokenService>();
 
             return services;
         }

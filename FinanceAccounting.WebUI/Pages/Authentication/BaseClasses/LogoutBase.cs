@@ -1,22 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FinanceAccounting.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Components;
+using FinanceAccounting.WebUI.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Authentication
+namespace FinanceAccounting.WebUI.Pages.Authentication.BaseClasses
 {
-    public partial class Logout
+    public class LogoutBase : FinanceAccountingBaseComponent
     {
-        [Inject]
-        private IAuthenticationClient AuthenticationClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<Logout> Logger { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             try

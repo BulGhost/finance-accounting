@@ -16,7 +16,7 @@ namespace FinanceAccounting.WebUI.Shared
         public int Spread { get; set; }
 
         [Parameter]
-        public EventCallback<int> SelectedPage { get; set; }
+        public EventCallback<int> PageSelected { get; set; }
 
         protected override void OnParametersSet()
         {
@@ -38,7 +38,7 @@ namespace FinanceAccounting.WebUI.Shared
             _links.Add(new PagingLink(PaginationData.CurrentPage + 1, PaginationData.HasNext, "Next"));
         }
 
-        private async Task OnSelectedPage(PagingLink link)
+        private async Task OnPageSelected(PagingLink link)
         {
             if (link.Page == PaginationData.CurrentPage || !link.Enabled)
             {
@@ -46,7 +46,7 @@ namespace FinanceAccounting.WebUI.Shared
             }
 
             PaginationData.CurrentPage = link.Page;
-            await SelectedPage.InvokeAsync(link.Page);
+            await PageSelected.InvokeAsync(link.Page);
         }
     }
 }

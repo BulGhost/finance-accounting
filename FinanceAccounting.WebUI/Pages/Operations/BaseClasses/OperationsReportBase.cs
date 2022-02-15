@@ -7,51 +7,33 @@ using FinanceAccounting.WebUI.Entities.Enums;
 using FinanceAccounting.WebUI.Entities.Models;
 using FinanceAccounting.WebUI.Entities.Models.ReportInterval;
 using FinanceAccounting.WebUI.Exceptions;
-using FinanceAccounting.WebUI.Services.Interfaces;
 using FinanceAccounting.WebUI.Shared;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceAccounting.WebUI.Pages.Operations
+namespace FinanceAccounting.WebUI.Pages.Operations.BaseClasses
 {
-    public partial class OperationsReport
+    public class OperationsReportBase : FinanceAccountingBaseComponent
     {
-        private const int _operationsPerPage = 10;
-        private const int _paginationSpread = 2;
-        private bool _isSortedAscending = false;
-        private string _activeSortColumn = nameof(OperationDto.Date);
-        private int _counter;
-        private int _selectedOperationId;
-        private ReportPeriod? _reportPeriod;
-        private ReportLoadingState _reportLoadingState = ReportLoadingState.NotLoaded;
-        private OperationType _displayedOperationType = OperationType.Expense;
-        private IEnumerable<OperationDto> _displayedOperations;
+        protected const int _operationsPerPage = 10;
+        protected const int _paginationSpread = 2;
 
-        private DayReportInterval _dailyInterval = new();
-        private MonthReportInterval _monthlyInterval = new();
-        private ArbitraryReportInterval _arbitraryInterval = new();
+        protected bool _isSortedAscending;
+        protected string _activeSortColumn = nameof(OperationDto.Date);
+        protected int _counter;
+        protected int _selectedOperationId;
+        protected ReportLoadingState _reportLoadingState = ReportLoadingState.NotLoaded;
+        protected IEnumerable<OperationDto> _displayedOperations;
 
-        public bool ShowError { get; set; }
-        public string ErrorMessage { get; set; }
-        public OperationsReportDto Report { get; set; }
-        public PaginationData PaginationData { get; set; } = new() {PageSize = _operationsPerPage};
+        protected OperationsReportDto Report { get; set; }
+        public OperationTypeToggle Toggle { get; set; }
+        protected PaginationData PaginationData { get; set; } = new() { PageSize = _operationsPerPage };
         protected Confirmation DeleteConfirmation { get; set; }
 
-        [Inject]
-        private IOperationsClient OperationsClient { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        private ILogger<OperationsReport> Logger { get; set; }
-
-        protected async Task GenerateReport_Click()
+        protected async Task OnGenerateCommand_Click(IReportInterval reportInterval)
         {
             try
             {
                 _reportLoadingState = ReportLoadingState.Loading;
-                IReportInterval reportInterval = GetReportInterval();
                 Report = await OperationsClient.GetOperationsReport(reportInterval);
                 SetDisplayedOperations(1);
                 _reportLoadingState = ReportLoadingState.Loaded;
@@ -66,15 +48,6 @@ namespace FinanceAccounting.WebUI.Pages.Operations
                 _reportLoadingState = ReportLoadingState.LoadFailed;
                 Logger.LogError(ex, "Failed to get operations report");
             }
-        }
-
-        protected void DisplayedOperationsTypeChanged_Click()
-        {
-            _displayedOperationType = _displayedOperationType == OperationType.Expense
-                ? OperationType.Income
-                : OperationType.Expense;
-
-            SetDisplayedOperations(1);
         }
 
         protected void EditOperation_Click()
@@ -106,22 +79,37 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             }
         }
 
-        private IReportInterval GetReportInterval()
+        protected void SortOperationsBy(string columnName)
         {
-            return _reportPeriod switch
+            if (columnName == _activeSortColumn)
             {
-                ReportPeriod.Day => _dailyInterval,
-                ReportPeriod.Month => _monthlyInterval,
-                ReportPeriod.Arbitrary => _arbitraryInterval,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                _isSortedAscending = !_isSortedAscending;
+            }
+            else
+            {
+                _activeSortColumn = columnName;
+                _isSortedAscending = columnName == nameof(OperationDto.CategoryName);
+            }
+
+            SetDisplayedOperations(1);
         }
 
-        private void SetDisplayedOperations(int pageNumber)
+        protected string SetSortIcon(string columnName)
+        {
+            if (_activeSortColumn != columnName)
+            {
+                return string.Empty;
+            }
+
+            return _isSortedAscending ? "oi-caret-top" : "oi-caret-bottom";
+        }
+
+        protected void SetDisplayedOperations(int pageNumber)
         {
             _selectedOperationId = 0;
             PaginationData.CurrentPage = pageNumber;
-            var operationsWithSelectedType = Report.Operations.Where(op => op.Type == _displayedOperationType).ToList();
+            var operationsWithSelectedType = Report.Operations
+                .Where(op => op.Type == (Toggle?.OperationType ?? default)).ToList();
             PaginationData.TotalCount = operationsWithSelectedType.Count;
             var orderedOperations = _isSortedAscending
                 ? operationsWithSelectedType.OrderBy(op => op.GetType().GetProperty(_activeSortColumn)!.GetValue(op))
@@ -148,31 +136,6 @@ namespace FinanceAccounting.WebUI.Pages.Operations
             Report.Operations.Remove(operationToDelete);
             _selectedOperationId = 0;
             SetDisplayedOperations(PaginationData.CurrentPage);
-        }
-
-        private void SortOperationsBy(string columnName)
-        {
-            if (columnName == _activeSortColumn)
-            {
-                _isSortedAscending = !_isSortedAscending;
-            }
-            else
-            {
-                _activeSortColumn = columnName;
-                _isSortedAscending = columnName == nameof(OperationDto.CategoryName);
-            }
-
-            SetDisplayedOperations(1);
-        }
-
-        private string SetSortIcon(string columnName)
-        {
-            if (_activeSortColumn != columnName)
-            {
-                return string.Empty;
-            }
-
-            return _isSortedAscending ? "oi-caret-top" : "oi-caret-bottom";
         }
     }
 }

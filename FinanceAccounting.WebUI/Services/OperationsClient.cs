@@ -21,7 +21,7 @@ namespace FinanceAccounting.WebUI.Services
         private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
         private readonly Lazy<Task<HttpClient>> _configuredHttpClient;
 
-        public OperationsClient(HttpClient httpClient, TokenService tokenService)
+        public OperationsClient(HttpClient httpClient, ITokenService tokenService)
         {
             _configuredHttpClient = new Lazy<Task<HttpClient>>(async () =>
             {
