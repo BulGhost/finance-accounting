@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinanceAccounting.WebUI.HelperClasses
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class PositiveAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object objValue, ValidationContext validationContext)
